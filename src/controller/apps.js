@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-  doGet(req, res) {
+  doGetApps(req, res) {
     res.render('apps');
+  },
+  doGetAppDetails(req, res) {
+    res.render('appDetails');
   },
 };

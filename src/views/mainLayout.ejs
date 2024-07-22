@@ -16,8 +16,22 @@
         <div class="d-flex align-items-center">
           <img src="/static/favicon-32x32.png" class="pe-3" width="auto" height="30"/>
           <a class="navbar-brand" href="/">PM2 Web UI</a>
+          <% if (loggedUser?.role === 'admin') { %>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/manage-users">Manage users</a>
+              </li>
+            </ul>
+          <% } %>
         </div>
-        <button type="button" class="btn btn-primary">Log in</button>
+        <% if (loggedUser) { %>
+          <div class="d-flex gap-3 align-items-center">
+            <%= loggedUser.login %> (<%= loggedUser.role.toLowerCase() %>)
+            <a href="/logout" class="btn btn-primary">Log out</a>
+          </div>
+        <% } else { %>
+          <button type="button" class="btn btn-primary">Log in</button>
+        <% } %>
       </div>
     </nav>
   </header>

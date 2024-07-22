@@ -1,13 +1,23 @@
-<div class="row d-flex justify-content-center align-items-center w-100 mx-auto media-small-form-size-box">
-  <form class="card mb-3 rounded-3 p-4 h-auto">
-    <div class="mb-3">
-      <label for="login" class="form-label">Login</label>
-      <input type="text" class="form-control" id="login">
+<div class="fixed-container mt-5 mx-auto">
+  <% if (error) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <%- error %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password">
-    </div>
-    <button type="submit" class="btn btn-primary">Log in</button>
-  </form>
+  <% } %>
+  <div class="card">
+    <form method="post" class="card-body p-4 mb-0">
+      <div class="mb-3">
+        <label for="login" class="form-label">Login:</label>
+        <input id="login" type="text" class="form-control" name="login" value="<%= form.login %>">
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input id="password" type="password" class="form-control" name="password">
+      </div>
+      <button class="btn btn-primary w-100" type="submit">
+        Log in
+      </button>
+    </form>
+  </div>
 </div>
