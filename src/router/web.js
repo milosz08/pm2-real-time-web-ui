@@ -13,5 +13,6 @@ router.get('/', userMustBeLogged, apps.doGet);
 router.get('/app/:appName', userMustBeLogged, appDetails.doGet);
 router.get('/login', userMustNotBeLogged, login.doGet);
 router.get('/logout', userMustBeLogged, logout.doGet);
+router.get('*', userMustBeLogged, apps.doGet);
 
 module.exports = router;
