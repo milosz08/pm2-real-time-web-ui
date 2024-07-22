@@ -32,7 +32,7 @@ app.use(nocache());
 app.use(expressSession({
   secret: 'secret-key',
   saveUninitialized: true,
-  cookie: { maxAge: ms('2h') },
+  cookie: { maxAge: null },
   resave: false,
 }));
 
