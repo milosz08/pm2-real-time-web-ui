@@ -13,7 +13,7 @@ router.get('/app/:pmId', middleware.userMustBeLogged, apps.doGetAppDetails);
 
 router.get('/login', middleware.userMustNotBeLogged, auth.doGetLogin);
 router.post('/login', middleware.userMustNotBeLogged, auth.doPostLogin);
-router.get('/logout', middleware.userMustBeLogged, auth.doGetLogout);
+router.get('/logout', auth.doGetLogout);
 
 router.get('/manage-users', middleware.userMustBeAdmin, manageUsers.doGetUsers);
 router.get('/add-user', middleware.userMustBeAdmin, manageUsers.doGetAddUser);

@@ -35,7 +35,8 @@ app.use(expressSession({
     maxAge: config.sessionMaxLife * 1000,
     secure: config.isProd,
   },
-  resave: false,
+  resave: true,
+  rolling: true,
   store: sessionStore,
 }));
 

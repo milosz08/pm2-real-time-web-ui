@@ -1,8 +1,20 @@
 'use strict';
 
+const determinateLogoutReason = (reason) => {
+  switch (reason) {
+    case 'sessionEnded':
+      return 'Session has been ended. Log in again.';
+    default:
+      return null;
+  }
+}
+
 module.exports = {
   doGetLogin(req, res) {
-    res.render('login');
+    const { reason } = req.query;
+    res.render('login', {
+      info: determinateLogoutReason(reason),
+    });
   },
   doPostLogin(req, res) {
     const { login, password } = req.body;
@@ -20,7 +32,8 @@ module.exports = {
     }
   },
   doGetLogout(req, res) {
+    const { reason } = req.query;
     req.session.loggedUser = null;
-    res.redirect('/login');
+    res.redirect(`/login?reason=${reason}`);
   },
 };

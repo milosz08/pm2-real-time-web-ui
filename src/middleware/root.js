@@ -13,6 +13,7 @@ module.exports = {
       ...loggedUser,
     } : null;
     res.locals.dataTick = config.interval;
+    res.locals.sessionTime = Date.now() + req.session.cookie.originalMaxAge;
     next();
   },
 };

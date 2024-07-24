@@ -1,5 +1,13 @@
 <div class="fixed-container mt-5 mx-auto">
   {{> errorAlert}}
+  {{#if info}}
+    <div class="col-12">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{{info}}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  {{/if}}
   <div class="card">
     <form method="post" class="card-body p-4 mb-0">
       <div class="mb-3">
