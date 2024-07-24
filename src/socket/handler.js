@@ -1,7 +1,8 @@
 'use strict';
 
-const { io, sessionStore } = require('../server');
+const { monitIo, consoleIo, sessionStore } = require('../server');
 const monit = require('./monit');
+const console = require('./console');
 
 const authenticationHandler = async (socket, next) => {
   try {
@@ -34,9 +35,15 @@ const authenticationHandler = async (socket, next) => {
   }
 };
 
-io.use(authenticationHandler);
+monitIo.use(authenticationHandler);
+consoleIo.use(authenticationHandler);
 
-io.on('connection', async socket => {
+monitIo.on('connection', async socket => {
   await monit.onStartConnection(socket);
   socket.on('disconnect', monit.onCloseConnection);
+});
+
+consoleIo.on('connection', async socket => {
+  await console.onStartConnection(socket);
+  socket.on('disconnect', console.onCloseConnection);
 });

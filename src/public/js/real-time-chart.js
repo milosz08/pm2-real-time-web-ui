@@ -39,7 +39,7 @@ function onContentLoad() {
 
   generateInitChartContent(chartInstance);
 
-  const socket = io({
+  const socket = io('/monit', {
     transports: ['websocket'],
     query: {
       type: 'single',

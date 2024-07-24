@@ -53,7 +53,7 @@ function onContentLoad() {
   initChartsMap(charts);
   generateInitChartContent();
 
-  const socket = io({
+  const socket = io('/monit', {
     transports: ['websocket'],
     query: {
       type: 'all',

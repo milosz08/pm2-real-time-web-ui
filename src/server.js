@@ -16,11 +16,14 @@ const { commonVariables } = require('./middleware/root');
 
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
 const MemoryStore = memoryStore(expressSession);
 const sessionStore = new MemoryStore({
   checkPeriod: config.sessionMaxLife,
 });
+
+const io = new Server(httpServer);
+const monitIo = io.of('/monit');
+const consoleIo = io.of('/console');
 
 app.use(nocache());
 app.use(cookieParser());
@@ -50,6 +53,8 @@ app.use(router);
 
 module.exports = {
   io,
+  monitIo,
+  consoleIo,
   sessionStore,
 };
 

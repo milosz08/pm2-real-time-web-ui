@@ -2,7 +2,7 @@
 
 const byteSize = require('byte-size');
 const pm2 = require('pm2');
-const { io } = require('../server');
+const { monitIo } = require('../server');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
 const { interval } = require('../utils/config');
@@ -11,14 +11,14 @@ let connectedWithPm2 = false;
 const monitIntervals = new Map();
 
 const checkIfRoomHasParticipants = (roomName) => {
-  const roomSockets = io.sockets.adapter.rooms.get(roomName);
+  const roomSockets = monitIo.adapter.rooms.get(roomName);
   if (!roomSockets || roomSockets.size === 0) {
     const interval = monitIntervals.get(roomName);
     if (interval) {
       clearInterval(interval);
     }
     monitIntervals.delete(roomName);
-    console.log('Removed interval: ', roomName);
+    console.log('Removed interval - monit: ', roomName);
     return false;
   }
   return true;
@@ -45,7 +45,7 @@ const perTickSendMonit = async (roomName, userApps) => {
         }
         return acc;
       }, {});
-      io.to(roomName).emit('monit:all', monitAppAsMap);
+      monitIo.to(roomName).emit('monit:all', monitAppAsMap);
     }
   } catch (e) {}
 };
@@ -54,7 +54,7 @@ const perTickSingleSendMonit = async (roomName, pmId) => {
   try {
     if (checkIfRoomHasParticipants(roomName)) {
       const app = await pm2Async.getProcessDetails(pmId);
-      io.to(roomName).emit('monit:single', constructAppDetails(app));
+      monitIo.to(roomName).emit('monit:single', constructAppDetails(app));
     }
   } catch (e) {}
 };
@@ -80,7 +80,7 @@ module.exports = {
         connectedWithPm2 = true;
       }
       const isIntervalNotStarted = monitIntervals.get(roomName);
-      const isRoomNotEmpty = io.sockets.adapter.rooms.get(roomName)?.size !== 0;
+      const isRoomNotEmpty = monitIo.adapter.rooms.get(roomName)?.size !== 0;
       if (!isIntervalNotStarted && isRoomNotEmpty) {
         let intervalFunction;
         if (socket.broadcasting.type.includes('all')) {
@@ -93,17 +93,17 @@ module.exports = {
           }, interval);
         }
         monitIntervals.set(roomName, intervalFunction);
-        console.log('Start interval: ', roomName);
+        console.log('Start interval - monit: ', roomName);
       }
     } catch (e) {
       console.error(e.message);
     }
   },
   onCloseConnection() {
-    if (monitIntervals.size === 0 || io.sockets.adapter.rooms.size === 0) {
+    if (monitIntervals.size === 0 || monitIo.adapter.rooms.size === 0) {
       pm2.disconnect();
       connectedWithPm2 = false;
-      console.log('Disconnect with PM2. Not active recipients.');
+      console.log('Disconnect with PM2 - monit. Not active recipients.');
     }
   },
 };
