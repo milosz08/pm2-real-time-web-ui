@@ -40,9 +40,8 @@
             </div>
             <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
               <canvas
-                id="<%= app.pmId %>-chart"
                 height="60px"
-                data-chart
+                data-chart="<%= app.pmId %>"
                 class="<%= app.status !== 'online' ? 'd-none' : '' %>">
               </canvas>
               <i id="<%= app.pmId %>-alt" class="<%= app.status === 'online' ? 'd-none' : '' %>">

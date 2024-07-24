@@ -10,7 +10,10 @@ function initChartsMap(charts) {
       chart.getContext('2d'),
       window.generateLineChartProps(),
     );
-    chartsMap.set(Number(chart.id.substring(0, 1)), chartInstance);
+    chartsMap.set(
+      Number(chart.dataset.chart),
+      chartInstance,
+    );
   }
 }
 
