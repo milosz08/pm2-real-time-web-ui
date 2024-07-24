@@ -1,3 +1,5 @@
+'use strict';
+
 function onContentLoad() {
   const consoleContainer = document.querySelector('[console-pm-id]');
   const id = consoleContainer.dataset.pmId;

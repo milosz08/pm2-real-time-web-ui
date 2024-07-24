@@ -17,4 +17,4 @@ module.exports = {
   sessionMaxLife: 60 * 60,
   sessionSecret: process.env.PM2_WEBUI_SECRET_KEY || uuidv4(),
   isProd: options.prod,
-}
+};

@@ -87,7 +87,7 @@ function determinateStatusColor(status) {
     default:
       return '';
   }
-};
+}
 
 window.updateLabels = function (pmId, appMonit) {
   const cpuLabel = document.getElementById(`cpu-${pmId}`);
@@ -116,4 +116,4 @@ window.updateLabels = function (pmId, appMonit) {
     pidLabel.innerText = appMonit.pId;
   }
   uptimeLabel.innerText = appMonit.uptime;
-}
+};
