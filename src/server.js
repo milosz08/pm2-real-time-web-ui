@@ -4,11 +4,11 @@ const express = require('express');
 const http = require('http');
 const nocache = require('nocache');
 const expressSession = require('express-session');
-const expressEjsLayouts = require('express-ejs-layouts');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { Server } = require('socket.io');
 const memoryStore = require('memorystore');
+const { engine } = require('express-handlebars');
 
 const config = require('./utils/config');
 const router = require('./router/web');
@@ -39,9 +39,8 @@ app.use(expressSession({
   store: sessionStore,
 }));
 
-app.use(expressEjsLayouts);
-app.set('layout', 'mainLayout');
-app.set('view engine', 'ejs');
+app.engine('.hbs', engine({ extname: '.hbs' }));
+app.set('view engine', '.hbs');
 app.set('views', path.resolve(__dirname, 'views'));
 
 app.use('/static', express.static(path.resolve(__dirname, 'public')));

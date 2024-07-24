@@ -110,7 +110,11 @@ window.updateLabels = function (pmId, appMonit) {
     } else {
       borderedContainer.classList.remove('border-success');
     }
-    statusLabel.className = determinateStatusColor(appMonit.status)
+    statusLabel.className = determinateStatusColor(appMonit.status);
+    borderedContainer.className = [
+      'card mb-3 p-3 container-fluid',
+      determinateStatusColor(appMonit.status).replace('text', 'border'),
+    ].join(' ');
   }
   if (pidLabel.textContent !== appMonit.pId) {
     pidLabel.innerText = appMonit.pId;

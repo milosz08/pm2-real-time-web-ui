@@ -20,6 +20,7 @@ const determinateStatusColor = (status) => {
 };
 
 const createAppDetailsObject = (app) => ({
+  pmId: app.pm_id,
   pId: app.pid,
   name: app.name,
   status: app.pm2_env.status,
@@ -29,6 +30,8 @@ const createAppDetailsObject = (app) => ({
   uptime: app.pm2_env.status === 'online'
     ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
     : '-',
+  borderColor: determinateStatusColor(app.pm2_env.status)
+    .replace('text', 'border'),
 });
 
 module.exports = {
@@ -42,20 +45,18 @@ module.exports = {
       pm2.disconnect();
       pm2Apps = apps
         .filter(({ pm_id }) => userApps.includes(pm_id) || userApps.length === 0)
-        .map(app => ({
-          ...createAppDetailsObject(app),
-          pmId: app.pm_id,
-        }));
+        .map(app => (createAppDetailsObject(app)));
     } catch (e) {
       error = e.message;
     }
     res.render('apps', {
       pm2Apps,
+      isNoApps: pm2Apps.length === 0,
       error,
     });
   },
   async doGetAppDetails(req, res) {
-    const pmId = req.params.pmId;
+    const { pmId } = req.params;
     let error = null;
     let appDetails;
     try {
@@ -75,7 +76,6 @@ module.exports = {
     }
     res.render('appDetails', {
       error,
-      pmId,
       appDetails,
     });
   },

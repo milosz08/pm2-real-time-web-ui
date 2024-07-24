@@ -1,0 +1,75 @@
+<script src="/static/js/manage-app.js"></script>
+<div class="row">
+  <div class="col-12">
+    {{> reloadButton}}
+  </div>
+  {{> errorAlert}}
+  {{#unless error}}
+    {{#if isNoApps}}
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          Not found any PM2 app.
+        </div>
+      </div>
+    {{else}}
+      <ul>
+        {{#each pm2Apps}}
+          <li
+            id="border-{{pmId}}"
+            class="card mb-3 p-3 container-fluid {{borderColor}}">
+            <div class="row">
+              <div class="col-12 col-md-3">
+                <h5>{{name}} ({{pmId}})</h5>
+                <p class="m-0">
+                  CPU: <b id="cpu-{{pmId}}">{{cpu}}</b>
+                </p>
+                <p class="m-0">
+                  Memory: <b id="mem-{{pmId}}">{{memory}}</b>
+                </p>
+                <p class="m-0">
+                  Uptime: <b id="uptime-{{pmId}}">{{uptime}}</b>
+                </p>
+                <p class="m-0">
+                  Status:
+                  <b id="status-{{pmId}}" class="{{statusColor}}">
+                    {{status}}
+                  </b>
+                </p>
+                <p class="m-0">
+                  Process ID: <b id="pid-{{pmId}}">{{pId}}</b>
+                </p>
+              </div>
+              <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
+                <canvas height="60px" data-chart="{{pmId}}"></canvas>
+              </div>
+              <div class="col-12 col-md-2 d-flex flex-column justify-content-between">
+                <div class="w-100 d-flex flex-column gap-2">
+                  <button
+                    onclick="reloadApp({{pmId}})"
+                    class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">refresh</span> Reload
+                  </button>
+                  <button
+                    onclick="restartApp({{pmId}})"
+                    class="btn btn-sm btn-success d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
+                  </button>
+                  <button
+                    onclick="stopApp({{pmId}})"
+                    class="btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
+                  </button>
+                </div>
+                <a href="/app/{{pmId}}" class="btn btn-sm btn-secondary">
+                  Go to details
+                </a>
+              </div>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  {{/unless}}
+</div>
+<script src="/static/js/line-chart-props.js"></script>
+<script src="/static/js/real-time-charts.js"></script>

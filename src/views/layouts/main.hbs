@@ -14,7 +14,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script type="text/javascript" src="/static/js/toast.js"></script>
   <script>
-    window.dataTick = '<%= dataTick %>';
+    window.dataTick = {{dataTick}};
   </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -24,30 +24,30 @@
         <div class="d-flex align-items-center">
           <img src="/static/favicon-32x32.png" class="pe-3" width="auto" height="30"/>
           <a class="navbar-brand" href="/">PM2 Web UI</a>
-          <% if (loggedUser?.role === 'admin') { %>
+          {{#if loggedUser.isAdmin}}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
                 <a class="nav-link" href="/manage-users">Manage users</a>
               </li>
             </ul>
-          <% } %>
+          {{/if}}
         </div>
-        <% if (loggedUser) { %>
+        {{#if loggedUser}}
           <div class="d-flex gap-3 align-items-center">
-            <%= loggedUser.login %> (<%= loggedUser.role.toLowerCase() %>)
+            {{loggedUser.login}} ({{loggedUser.role}})
             <a href="/logout" class="btn btn-primary">Log out</a>
           </div>
-        <% } else { %>
+        {{else}}
           <button type="button" class="btn btn-primary">Log in</button>
-        <% } %>
+        {{/if}}
       </div>
     </nav>
   </header>
   <main class="container flex-grow-1 py-3">
-    <%- body %>
+    {{{body}}}
   </main>
   <footer class="bg-body-tertiary p-4 text-center">
-    &copy; <%= nowYear %> by Miłosz Gilga
+    &copy; {{nowYear}} by Miłosz Gilga
   </footer>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

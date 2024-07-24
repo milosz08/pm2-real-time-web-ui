@@ -1,10 +1,10 @@
 <div class="fixed-container mt-5 mx-auto">
-  <%- include("./partials/errorAlert.ejs") %>
+  {{> errorAlert}}
   <div class="card">
     <form method="post" class="card-body p-4 mb-0">
       <div class="mb-3">
         <label for="login" class="form-label">Login:</label>
-        <input id="login" type="text" class="form-control" name="login" value="<%= form.login %>">
+        <input id="login" type="text" class="form-control" name="login" value="{{form.login}}">
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Password:</label>

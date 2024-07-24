@@ -1,21 +1,17 @@
 'use strict';
 
-function reloadApp(pmIdStr) {
-  const pmId = Number(pmIdStr);
+function reloadApp(pmId) {
   console.log('reload app');
 }
 
-function restartApp(pmIdStr) {
-  const pmId = Number(pmIdStr);
+function restartApp(pmId) {
   console.log('restart app');
 }
 
-function stopApp(pmIdStr) {
-  const pmId = Number(pmIdStr);
+function stopApp(pmId) {
   console.log('stop app');
 }
 
-function deleteApp(pmIdStr) {
-  const pmId = Number(pmIdStr);
+function deleteApp(pmId) {
   console.log('delete app');
 }
