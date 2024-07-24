@@ -30,7 +30,7 @@ function updateChartOnTick(appMonit, chart, pmId) {
 
 function onContentLoad() {
   const chart = document.querySelector('[data-pm-id]');
-  const pmId = chart.dataset.pmId;
+  const id = chart.dataset.pmId;
 
   const chartInstance = new Chart(
     chart.getContext('2d'),
@@ -42,13 +42,12 @@ function onContentLoad() {
   const socket = io('/monit', {
     transports: ['websocket'],
     query: {
-      type: 'single',
-      id: pmId,
+      id,
     },
   });
 
   socket.on('monit:single', function (appMonit) {
-    updateChartOnTick(appMonit, chartInstance, pmId);
+    updateChartOnTick(appMonit, chartInstance, id);
   });
 
   socket.on('connect_error', function (error) {

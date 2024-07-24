@@ -61,11 +61,11 @@ const perTickSingleSendMonit = async (roomName, pmId) => {
 
 const determinateRoomName = (socket) => {
   const userApps = socket.userApps;
-  let roomName = socket.broadcasting.type;
+  let roomName = 'all';
   if (userApps.length !== 0 && !socket.broadcasting.id) {
     roomName += `-${userApps.join('-')}`;
   } else if (socket.broadcasting.id) {
-    roomName += `-${socket.broadcasting.id}`;
+    roomName = `single-${socket.broadcasting.id}`;
   }
   return roomName;
 };
@@ -83,7 +83,7 @@ module.exports = {
       const isRoomNotEmpty = monitIo.adapter.rooms.get(roomName)?.size !== 0;
       if (!isIntervalNotStarted && isRoomNotEmpty) {
         let intervalFunction;
-        if (socket.broadcasting.type.includes('all')) {
+        if (!socket.broadcasting.id) {
           intervalFunction = setInterval(() => {
             perTickSendMonit(roomName, socket.userApps);
           }, interval);

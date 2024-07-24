@@ -55,9 +55,6 @@ function onContentLoad() {
 
   const socket = io('/monit', {
     transports: ['websocket'],
-    query: {
-      type: 'all',
-    },
   });
 
   socket.on('monit:all', updateChartOnTick);
