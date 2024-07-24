@@ -75,6 +75,20 @@ window.generateLineChartProps = function() {
   }
 };
 
+function determinateStatusColor(status) {
+  switch (status) {
+    case 'online':
+      return 'text-success';
+    case 'stopped':
+    case 'errored':
+      return 'text-danger';
+    case 'paused':
+      return 'text-warning';
+    default:
+      return '';
+  }
+};
+
 window.updateLabels = function (pmId, appMonit) {
   const cpuLabel = document.getElementById(`cpu-${pmId}`);
   const memLabel = document.getElementById(`mem-${pmId}`);
@@ -82,24 +96,24 @@ window.updateLabels = function (pmId, appMonit) {
   const statusLabel = document.getElementById(`status-${pmId}`);
   const pidLabel = document.getElementById(`pid-${pmId}`);
   const borderedContainer = document.getElementById(`border-${pmId}`);
-  const chartCanvas = document.getElementById(`chart-${pmId}`);
-  const altText = document.getElementById(`alt-${pmId}`);
 
-  cpuLabel.innerText = `${appMonit.cpu}%`;
-  memLabel.innerText = appMonit.memory;
-  uptimeLabel.innerText = appMonit.uptime;
-  statusLabel.innerText = appMonit.status;
-  pidLabel.innerText = appMonit.pId;
-
-  if (appMonit.status === 'online') {
-    borderedContainer.classList.add('border-success');
-    statusLabel.classList.add('text-success');
-    chartCanvas.classList.remove('d-none');
-    altText.classList.add('d-none');
-  } else {
-    borderedContainer.classList.remove('border-success');
-    statusLabel.classList.remove('text-success');
-    chartCanvas.classList.add('d-none');
-    altText.classList.remove('d-none');
+  if (cpuLabel.textContent !== `${appMonit.cpu}%`) {
+    cpuLabel.innerText = `${appMonit.cpu}%`;
   }
+  if (memLabel.textContent !== appMonit.memory) {
+    memLabel.innerText = appMonit.memory;
+  }
+  if (statusLabel.textContent !== appMonit.status) {
+    statusLabel.innerText = appMonit.status;
+    if (appMonit.status === 'online') {
+      borderedContainer.classList.add('border-success');
+    } else {
+      borderedContainer.classList.remove('border-success');
+    }
+    statusLabel.className = determinateStatusColor(appMonit.status)
+  }
+  if (pidLabel.textContent !== appMonit.pId) {
+    pidLabel.innerText = appMonit.pId;
+  }
+  uptimeLabel.innerText = appMonit.uptime;
 }

@@ -57,9 +57,7 @@
           </p>
           <p class="m-0">
             Status:
-            <b
-              id="status-<%= pmId %>"
-              class="<%= appDetails.status === 'online' ? 'text-success' : '' %>">
+            <b id="status-<%= pmId %>" class="<%= appDetails.statusColor %>">
               <%= appDetails.status %>
             </b>
           </p>
@@ -68,38 +66,30 @@
           </p>
         </div>
         <div class="col-12 col-md-9 mb-3 d-flex justify-content-center align-items-center py-2">
-          <canvas
-            id="chart-<%= pmId %>"
-            height="60px"
-            data-pm-id="<%= pmId %>"
-            class="<%= appDetails.status !== 'online' ? 'd-none' : '' %>">
-          </canvas>
-          <i id="alt-<%= pmId %>" class="<%= appDetails.status === 'online' ? 'd-none' : '' %>">
-            Run app to see chart data
-          </i>
+          <canvas height="60px" data-pm-id="<%= pmId %>"></canvas>
         </div>
         <div class="col-12 mb-3">
           <div class="container-fluid">
             <div class="row gap-2">
               <button
                 onclick="reloadApp('<%= pmId %>')"
-                class="col-12 col-md btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                class="col-12 col-md btn btn-primary d-flex justify-content-center align-items-center gap-1">
                 <span class="material-symbols-outlined fs-6">refresh</span> Reload
               </button>
               <button
                 onclick="restartApp('<%= pmId %>')"
-                class="col-12 col-md btn btn-sm btn-success d-flex justify-content-center align-items-center gap-1">
+                class="col-12 col-md btn btn-success d-flex justify-content-center align-items-center gap-1">
                 <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
               </button>
               <button
                 onclick="stopApp('<%= pmId %>')"
-                class="col-12 col-md btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
+                class="col-12 col-md btn btn-danger d-flex justify-content-center align-items-center gap-1">
                 <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
               </button>
               <button
                 data-bs-toggle="modal"
                 data-bs-target="#confirmationModal"
-                class="col-12 col-md btn btn-sm btn-outline-danger d-flex justify-content-center align-items-center gap-1">
+                class="col-12 col-md btn btn-outline-danger d-flex justify-content-center align-items-center gap-1">
                 <span class="material-symbols-outlined fs-6">delete_forever</span> Delete
               </button>
             </div>

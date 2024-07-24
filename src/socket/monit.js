@@ -33,16 +33,17 @@ const constructAppDetails = (app) => ({
   status: app.pm2_env.status,
 });
 
-const perTickSendMonit = async () => {
+const perTickSendMonit = async (roomName, userApps) => {
   try {
-    const roomName = 'all';
     if (checkIfRoomHasParticipants(roomName)) {
       const apps = await pm2Async.getListOfProcesses();
       const monitAppAsMap = apps.reduce((acc, app) => {
-        acc[app.pm_id] = constructAppDetails(app);
+        if (userApps.size === 0 || userApps.some(pmId => app.pm_id === pmId)) {
+          acc[app.pm_id] = constructAppDetails(app);
+        }
         return acc;
       }, {});
-      io.to(roomName).emit('monit:all', monitAppAsMap);  
+      io.to(roomName).emit('monit:all', monitAppAsMap);
     }
   } catch (e) {}
 };
@@ -57,8 +58,11 @@ const perTickSingleSendMonit = async (roomName, pmId) => {
 };
 
 const determinateRoomName = (socket) => {
+  const userApps = socket.userApps;
   let roomName = socket.broadcasting.type;
-  if (socket.broadcasting.id) {
+  if (userApps.length !== 0 && !socket.broadcasting.id) {
+    roomName += `-${userApps.join('-')}`;
+  } else if (socket.broadcasting.id) {
     roomName += `-${socket.broadcasting.id}`;
   }
   return roomName;
@@ -69,7 +73,6 @@ module.exports = {
     try {
       const roomName = determinateRoomName(socket);
       socket.join(roomName);
-
       if (!connectedWithPm2) {
         await pm2Async.connect();
         connectedWithPm2 = true;
@@ -78,8 +81,10 @@ module.exports = {
       const isRoomNotEmpty = io.sockets.adapter.rooms.get(roomName)?.size !== 0;
       if (!isIntervalNotStarted && isRoomNotEmpty) {
         let intervalFunction;
-        if (socket.broadcasting.type === 'all') {
-          intervalFunction = setInterval(perTickSendMonit, interval);
+        if (socket.broadcasting.type.includes('all')) {
+          intervalFunction = setInterval(() => {
+            perTickSendMonit(roomName, socket.userApps);
+          }, interval);
         } else {
           intervalFunction = setInterval(() => {
             perTickSingleSendMonit(roomName, socket.broadcasting.id)
@@ -93,11 +98,10 @@ module.exports = {
     }
   },
   onCloseConnection() {
-    // disconnect with PM2, when none rooms is active
-    // or all monit intervals are terminated
     if (monitIntervals.size === 0 || io.sockets.adapter.rooms.size === 0) {
       pm2.disconnect();
       connectedWithPm2 = false;
+      console.log('Disconnect with PM2. Not active recipients.');
     }
   },
 };

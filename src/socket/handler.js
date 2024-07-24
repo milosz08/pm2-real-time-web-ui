@@ -10,7 +10,7 @@ const authenticationHandler = async (socket, next) => {
       ?.split('.')[0]
       ?.substring(4);
     if (!sessionID) {
-      new Error('WS authentication error');
+      throw new Error('WS authentication error');
     }
     const session = await new Promise((resolve, reject) => {
       sessionStore.get(sessionID, (err, session) => {
@@ -20,7 +20,14 @@ const authenticationHandler = async (socket, next) => {
         resolve(session);
       });
     });
+    const userApps = [0,3]; // TODO: get user apps from DB
+    const { type, id } = socket.handshake.query;
+    if (type === 'single' && (userApps.length !== 0 && !userApps.includes(Number(id)))) {
+      throw new Error('WS forbidden channel error');
+    }
+    socket.session = session;
     socket.broadcasting = socket.handshake.query;
+    socket.userApps = userApps;
     next();
   } catch (e) {
     next(e);

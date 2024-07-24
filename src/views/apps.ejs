@@ -28,9 +28,7 @@
               </p>
               <p class="m-0">
                 Status:
-                <b
-                  id="status-<%= app.pmId %>"
-                  class="<%= app.status === 'online' ? 'text-success' : '' %>">
+                <b id="status-<%= app.pmId %>" class="<%= app.statusColor %>">
                   <%= app.status %>
                 </b>
               </p>
@@ -39,15 +37,7 @@
               </p>
             </div>
             <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
-              <canvas
-                id="chart-<%= app.pmId %>"
-                height="60px"
-                data-chart="<%= app.pmId %>"
-                class="<%= app.status !== 'online' ? 'd-none' : '' %>">
-              </canvas>
-              <i id="alt-<%= app.pmId %>" class="<%= app.status === 'online' ? 'd-none' : '' %>">
-                Run app to see chart data
-              </i>
+              <canvas height="60px" data-chart="<%= app.pmId %>"></canvas>
             </div>
             <div class="col-12 col-md-2 d-flex flex-column justify-content-between">
               <div class="w-100 d-flex flex-column gap-2">
