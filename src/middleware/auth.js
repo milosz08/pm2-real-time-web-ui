@@ -18,4 +18,13 @@ module.exports = {
       next();
     }
   },
-}
+  userMustBeAdmin(req, res, next) {
+    const user = req.session.loggedUser;
+    if (!user || user.role !== 'admin') {
+      res.redirect('/');
+    } else {
+      res.locals.loggedUser = req.session.loggedUser;
+      next();
+    }
+  },
+};
