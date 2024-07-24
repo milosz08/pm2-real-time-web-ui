@@ -17,7 +17,7 @@ const checkIfRoomHasParticipants = (roomName) => {
       clearInterval(interval);
     }
     consoleIntervals.delete(roomName);
-    logger.info('Removed interval - console: ', roomName);
+    logger.info(`Removed interval - console: ${roomName}`);
     return false;
   }
   return true;
@@ -47,7 +47,7 @@ module.exports = {
         consoleIntervals.set(roomName, setInterval(() => {
           onConsoleTick(roomName, socket.broadcasting.id)
         }, logsInterval));
-        logger.info('Start interval - console: ', roomName);
+        logger.info(`Start interval - console: ${roomName}`);
       }
     } catch (e) {
       console.error(e.message);
