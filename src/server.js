@@ -2,38 +2,38 @@
 
 const express = require('express');
 const http = require('http');
-const commandLineArgs = require('command-line-args');
 const nocache = require('nocache');
 const expressSession = require('express-session');
 const expressEjsLayouts = require('express-ejs-layouts');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const ms = require('ms');
 const { Server } = require('socket.io');
+const memoryStore = require('memorystore');
 
+const config = require('./utils/config');
 const router = require('./router/web');
 const { commonVariables } = require('./middleware/root');
-
-const options = commandLineArgs([
-  { name: 'port', alias: 'p', type: Number, defaultValue: 3000 },
-]);
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);
-
-module.exports = {
-  io,
-};
-
-require('./socket/handler');
+const MemoryStore = memoryStore(expressSession);
+const sessionStore = new MemoryStore({
+  checkPeriod: config.sessionMaxLife,
+});
 
 app.use(nocache());
+app.use(cookieParser());
+
 app.use(expressSession({
-  secret: 'secret-key',
+  secret: config.sessionSecret,
   saveUninitialized: true,
-  cookie: { maxAge: null },
+  cookie: {
+    maxAge: config.sessionMaxLife * 1000,
+    secure: config.isProd,
+  },
   resave: false,
+  store: sessionStore,
 }));
 
 app.use(expressEjsLayouts);
@@ -42,14 +42,19 @@ app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, 'views'));
 
 app.use('/static', express.static(path.resolve(__dirname, 'public')));
-
 app.use('/', commonVariables);
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 app.use(router);
 
-httpServer.listen(options.port, () => {
-  console.log(`Server started at port: ${options.port}`);
+module.exports = {
+  io,
+  sessionStore,
+};
+
+require('./socket/handler');
+
+httpServer.listen(config.port, () => {
+  console.log(`Server started at port: ${config.port}`);
 });

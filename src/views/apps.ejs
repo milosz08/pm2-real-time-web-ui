@@ -1,2 +1,81 @@
-<div>APPS PAGE</div>
-<script src="/static/js/index.js"></script>
+<script src="/static/js/manage-app.js"></script>
+<div class="row">
+  <div class="col-12">
+    <%- include("./partials/reloadButton.ejs") %>
+  </div>
+  <%- include("./partials/errorAlert.ejs") %>
+  <% if (pm2Apps.length === 0) { %>
+    <div class="alert alert-warning" role="alert">
+      Not found any PM2 app.
+    </div>
+  <% } else { %>
+    <ul>
+      <% for (const app of pm2Apps) { %>
+        <li
+          id="<%= app.pmId %>-border"
+          class="card mb-3 p-3 container-fluid <%= app.status === 'online' ? 'border-success' : '' %>">
+          <div class="row">
+            <div class="col-12 col-md-3">
+              <h5><%= app.name %> (<%= app.pmId %>)</h5>
+              <p class="m-0">
+                CPU: <b id="<%= app.pmId %>-cpu"><%= app.cpu %></b>
+              </p>
+              <p class="m-0">
+                Memory: <b id="<%= app.pmId %>-mem"><%= app.memory %></b>
+              </p>
+              <p class="m-0">
+                Uptime: <b id="<%= app.pmId %>-uptime"><%= app.uptime %></b>
+              </p>
+              <p class="m-0">
+                Status:
+                <b
+                  id="<%= app.pmId %>-status"
+                  class="<%= app.status === 'online' ? 'text-success' : '' %>">
+                  <%= app.status %>
+                </b>
+              </p>
+              <p class="m-0">
+                Process ID: <b id="<%= app.pmId %>-pid"><%= app.pId %></b>
+              </p>
+            </div>
+            <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
+              <canvas
+                id="<%= app.pmId %>-chart"
+                height="60px"
+                data-chart
+                class="<%= app.status !== 'online' ? 'd-none' : '' %>">
+              </canvas>
+              <i id="<%= app.pmId %>-alt" class="<%= app.status === 'online' ? 'd-none' : '' %>">
+                Run app to see chart data
+              </i>
+            </div>
+            <div class="col-12 col-md-2 d-flex flex-column justify-content-between">
+              <div class="w-100 d-flex flex-column gap-2">
+                <button
+                  onclick="reloadApp('<%= app.pmId %>')"
+                  class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                  <span class="material-symbols-outlined fs-6">refresh</span> Reload
+                </button>
+                <button
+                  onclick="restartApp('<%= app.pmId %>')"
+                  class="btn btn-sm btn-success d-flex justify-content-center align-items-center gap-1">
+                  <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
+                </button>
+                <button
+                  onclick="stopApp('<%= app.pmId %>')"
+                  class="btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
+                  <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
+                </button>
+              </div>
+              <a href="/app/<%= app.pmId %>" class="btn btn-sm btn-secondary">
+                Go to details
+              </a>
+            </div>
+          </div>
+        </li>
+      <% } %>
+      </ul>
+  <% } %>
+</div>
+<script src="/static/js/line-chart-props.js"></script>
+<script src="/static/js/real-time-charts.js"></script>

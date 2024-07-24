@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "npx nodemon src/server.js",
+    "dev": "npx nodemon --ignore src/public/ src/server.js",
     "start": "node src/server.js"
   },
   "author": {
@@ -16,14 +16,18 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "byte-size": "^9.0.0",
     "command-line-args": "^6.0.0",
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.0",
-    "ms": "^2.1.3",
+    "luxon": "^3.4.4",
+    "memorystore": "^1.6.7",
     "nocache": "^4.0.0",
-    "socket.io": "^4.7.5"
+    "pm2": "^5.4.2",
+    "socket.io": "^4.7.5",
+    "uuid": "^10.0.0"
   }
 }

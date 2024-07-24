@@ -1,2 +1,121 @@
-<div>APP DETAILS PAGE</div>
-<script src="/static/js/index.js"></script>
+<script src="/static/js/manage-app.js"></script>
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">
+          Delete app <b><%= appDetails.name %> (<%= pmId %>)</b>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to remove the <b><%= appDetails.name %></b> application?
+        This operation cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="button"
+          data-bs-dismiss="modal"
+          onclick="deleteApp('<%= pmId %>')"
+          class="btn btn-danger">
+        Delete
+      </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <a
+      href="/"
+      class="btn btn-secondary w-100">
+      Return to all apps
+    </a>
+  </div>
+  <div class="col-12 col-md-6">
+    <%- include("./partials/reloadButton.ejs") %>
+  </div>
+  <%- include("./partials/errorAlert.ejs") %>
+  <div class="col-12">
+    <div
+      id="<%= pmId %>-border"
+      class="card mb-3 p-3 container-fluid <%= appDetails.status === 'online' ? 'border-success' : '' %>">
+      <div class="row">
+        <div class="col-12 col-md-3 mb-3">
+          <h4><%= appDetails.name %> (<%= pmId %>)</h4>
+          <p class="m-0">
+            CPU: <b id="<%= pmId %>-cpu"><%= appDetails.cpu %></b>
+          </p>
+          <p class="m-0">
+            Memory: <b id="<%= pmId %>-mem"><%= appDetails.memory %></b>
+          </p>
+          <p class="m-0">
+            Uptime: <b id="<%= pmId %>-uptime"><%= appDetails.uptime %></b>
+          </p>
+          <p class="m-0">
+            Status:
+            <b
+              id="<%= pmId %>-status"
+              class="<%= appDetails.status === 'online' ? 'text-success' : '' %>">
+              <%= appDetails.status %>
+            </b>
+          </p>
+          <p class="m-0">
+            Process ID: <b id="<%= pmId %>-pid"><%= appDetails.pId %></b>
+          </p>
+        </div>
+        <div class="col-12 col-md-9 mb-3 d-flex justify-content-center align-items-center py-2">
+          <canvas
+            id="chart"
+            height="60px"
+            data-pm-id="<%= pmId %>"
+            class="<%= appDetails.status !== 'online' ? 'd-none' : '' %>">
+          </canvas>
+          <i id="<%= pmId %>-alt" class="<%= appDetails.status === 'online' ? 'd-none' : '' %>">
+            Run app to see chart data
+          </i>
+        </div>
+        <div class="col-12 mb-3">
+          <div class="container-fluid">
+            <div class="row gap-2">
+              <button
+                onclick="reloadApp('<%= pmId %>')"
+                class="col-12 col-md btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">refresh</span> Reload
+              </button>
+              <button
+                onclick="restartApp('<%= pmId %>')"
+                class="col-12 col-md btn btn-sm btn-success d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
+              </button>
+              <button
+                onclick="stopApp('<%= pmId %>')"
+                class="col-12 col-md btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
+              </button>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#confirmationModal"
+                class="col-12 col-md btn btn-sm btn-outline-danger d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">delete_forever</span> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          Executable path: <code><%= appDetails.execPath %></code>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card mb-3 p-3">
+      console logs
+    </div>
+  </div>
+</div>
+<script src="/static/js/line-chart-props.js"></script>
+<script src="/static/js/real-time-chart.js"></script>
