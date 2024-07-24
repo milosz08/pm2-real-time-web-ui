@@ -45,23 +45,31 @@
           class="card mb-3 p-3 container-fluid {{borderColor}}">
           <div class="row">
             <div class="col-12 col-md-3 mb-3">
-              <h4>{{name}} ({{pmId}})</h4>
-              <p class="m-0">
+              <h4 class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined">deployed_code</span>
+                {{name}} ({{pmId}})
+              </h4>
+              <p class="m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-5">memory</span>
                 CPU: <b id="cpu-{{pmId}}">{{cpu}}</b>
               </p>
-              <p class="m-0">
+              <p class="m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-5">memory_alt</span>
                 Memory: <b id="mem-{{pmId}}">{{memory}}</b>
               </p>
-              <p class="m-0">
+              <p class="m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-5">schedule</span>
                 Uptime: <b id="uptime-{{pmId}}">{{uptime}}</b>
               </p>
-              <p class="m-0">
+              <p class="m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-5">sprint</span>
                 Status:
                 <b id="status-{{pmId}}" class="{{statusColor}}">
                   {{status}}
                 </b>
               </p>
-              <p class="m-0">
+              <p class="m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-5">fingerprint</span>
                 Process ID: <b id="pid-{{pmId}}">{{pId}}</b>
               </p>
             </div>
