@@ -85,7 +85,7 @@ window.updateLabels = function (pmId, appMonit) {
   const chartCanvas = document.getElementById(`chart-${pmId}`);
   const altText = document.getElementById(`alt-${pmId}`);
 
-  cpuLabel.innerText = appMonit.cpu;
+  cpuLabel.innerText = `${appMonit.cpu}%`;
   memLabel.innerText = appMonit.memory;
   uptimeLabel.innerText = appMonit.uptime;
   statusLabel.innerText = appMonit.status;
