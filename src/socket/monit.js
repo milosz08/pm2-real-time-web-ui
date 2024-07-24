@@ -6,6 +6,7 @@ const { monitIo } = require('../server');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
 const { interval } = require('../utils/config');
+const logger = require('../utils/logger');
 
 let connectedWithPm2 = false;
 const monitIntervals = new Map();
@@ -18,7 +19,7 @@ const checkIfRoomHasParticipants = (roomName) => {
       clearInterval(interval);
     }
     monitIntervals.delete(roomName);
-    console.log('Removed interval - monit: ', roomName);
+    logger.info('Removed interval - monit: ', roomName);
     return false;
   }
   return true;
@@ -93,7 +94,7 @@ module.exports = {
           }, interval);
         }
         monitIntervals.set(roomName, intervalFunction);
-        console.log('Start interval - monit: ', roomName);
+        logger.info('Start interval - monit: ', roomName);
       }
     } catch (e) {
       console.error(e.message);
@@ -103,7 +104,7 @@ module.exports = {
     if (monitIntervals.size === 0 || monitIo.adapter.rooms.size === 0) {
       pm2.disconnect();
       connectedWithPm2 = false;
-      console.log('Disconnect with PM2 - monit. Not active recipients.');
+      logger.info('Disconnect with PM2 - monit. Not active recipients.');
     }
   },
 };

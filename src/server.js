@@ -13,6 +13,7 @@ const { engine } = require('express-handlebars');
 const config = require('./utils/config');
 const router = require('./router/web');
 const { commonVariables } = require('./middleware/root');
+const logger = require('./utils/logger');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -61,5 +62,5 @@ module.exports = {
 require('./socket/handler');
 
 httpServer.listen(config.port, () => {
-  console.log(`Server started at port: ${config.port}`);
+  logger.info(`Server started at port: ${config.port}`)
 });

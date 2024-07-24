@@ -4,6 +4,7 @@ const pm2 = require('pm2');
 const { consoleIo } = require('../server');
 const pm2Async = require('../utils/pm2AsyncApi');
 const { logsInterval } = require('../utils/config');
+const logger = require('../utils/logger');
 
 let connectedWithPm2 = false;
 const consoleIntervals = new Map();
@@ -16,7 +17,7 @@ const checkIfRoomHasParticipants = (roomName) => {
       clearInterval(interval);
     }
     consoleIntervals.delete(roomName);
-    console.log('Removed interval - console: ', roomName);
+    logger.info('Removed interval - console: ', roomName);
     return false;
   }
   return true;
@@ -46,7 +47,7 @@ module.exports = {
         consoleIntervals.set(roomName, setInterval(() => {
           onConsoleTick(roomName, socket.broadcasting.id)
         }, logsInterval));
-        console.log('Start interval - console: ', roomName);
+        logger.info('Start interval - console: ', roomName);
       }
     } catch (e) {
       console.error(e.message);
@@ -56,7 +57,7 @@ module.exports = {
     if (consoleIntervals.size === 0 || consoleIo.adapter.rooms.size === 0) {
       pm2.disconnect();
       connectedWithPm2 = false;
-      console.log('Disconnect with PM2 - console. Not active recipients.');
+      logger.info('Disconnect with PM2 - console. Not active recipients.');
     }
   },
 };
