@@ -20,7 +20,7 @@ const authenticationHandler = async (socket, next) => {
         resolve(session);
       });
     });
-    socket.session = session;
+    socket.broadcasting = socket.handshake.query;
     next();
   } catch (e) {
     next(e);

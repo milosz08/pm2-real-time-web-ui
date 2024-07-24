@@ -12,12 +12,10 @@ function generateInitChartContent(chart) {
   }
 }
 
-function updateChartOnTick(appsMonit, chart, pmId) {
+function updateChartOnTick(appMonit, chart, pmId) {
   const now = new Date();
   const timeLabel = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
   
-  const appMonit = appsMonit[pmId];
-
   if (chart.data.labels.length >= initElementsCount) {
     chart.data.labels.shift();
     chart.data.datasets.forEach(dataset => dataset.data.shift());
@@ -31,7 +29,7 @@ function updateChartOnTick(appsMonit, chart, pmId) {
 }
 
 function onContentLoad() {
-  const chart = document.getElementById('chart');
+  const chart = document.querySelector('[data-pm-id]');
   const pmId = chart.dataset.pmId;
 
   const chartInstance = new Chart(
@@ -41,10 +39,16 @@ function onContentLoad() {
 
   generateInitChartContent(chartInstance);
 
-  const socket = io({ transports: ["websocket"] });
+  const socket = io({
+    transports: ['websocket'],
+    query: {
+      type: 'single',
+      id: pmId,
+    },
+  });
 
-  socket.on('monit:all', function (appsMonit) {
-    updateChartOnTick(appsMonit, chartInstance, pmId);
+  socket.on('monit:single', function (appMonit) {
+    updateChartOnTick(appMonit, chartInstance, pmId);
   });
 
   socket.on('connect_error', function (error) {

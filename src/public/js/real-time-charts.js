@@ -53,7 +53,13 @@ function onContentLoad() {
   initChartsMap(charts);
   generateInitChartContent();
 
-  const socket = io({ transports: ["websocket"] });
+  const socket = io({
+    transports: ['websocket'],
+    query: {
+      type: 'all',
+    },
+  });
+
   socket.on('monit:all', updateChartOnTick);
 
   socket.on('connect_error', function (error) {
