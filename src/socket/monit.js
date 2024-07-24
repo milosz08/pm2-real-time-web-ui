@@ -29,7 +29,9 @@ const constructAppDetails = (app) => ({
   cpu: app.monit.cpu,
   memory: `${byteSize(app.monit.memory)}`,
   memoryRaw: parseFloat(byteSize(app.monit.memory).value),
-  uptime: dateFormat.toMostSignificant(app.pm2_env.pm_uptime),
+  uptime: app.pm2_env.status === 'online'
+    ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
+    : '-',
   status: app.pm2_env.status,
 });
 

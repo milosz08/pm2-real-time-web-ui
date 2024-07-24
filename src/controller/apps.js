@@ -19,6 +19,18 @@ const determinateStatusColor = (status) => {
   }
 };
 
+const createAppDetailsObject = (app) => ({
+  pId: app.pid,
+  name: app.name,
+  status: app.pm2_env.status,
+  statusColor: determinateStatusColor(app.pm2_env.status),
+  cpu: `${app.monit.cpu}%`,
+  memory: `${byteSize(app.monit.memory)}`,
+  uptime: app.pm2_env.status === 'online'
+    ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
+    : '-',
+});
+
 module.exports = {
   async doGetApps(_, res) {
     let pm2Apps = [];
@@ -31,14 +43,8 @@ module.exports = {
       pm2Apps = apps
         .filter(({ pm_id }) => userApps.includes(pm_id) || userApps.length === 0)
         .map(app => ({
+          ...createAppDetailsObject(app),
           pmId: app.pm_id,
-          pId: app.pid,
-          name: app.name,
-          status: app.pm2_env.status,
-          statusColor: determinateStatusColor(app.pm2_env.status),
-          cpu: `${app.monit.cpu}%`,
-          memory: `${byteSize(app.monit.memory)}`,
-          uptime: dateFormat.toMostSignificant(app.pm2_env.pm_uptime),
         }));
     } catch (e) {
       error = e.message;
@@ -61,13 +67,7 @@ module.exports = {
       await pm2Async.connect();
       const app = await pm2Async.getProcessDetails(pmId);
       appDetails = {
-        pId: app.pid,
-        name: app.name,
-        status: app.pm2_env.status,
-        statusColor: determinateStatusColor(app.pm2_env.status),
-        cpu: `${app.monit.cpu}%`,
-        memory:`${byteSize(app.monit.memory)}`,
-        uptime: dateFormat.toMostSignificant(app.pm2_env.pm_uptime),
+        ...createAppDetailsObject(app),
         execPath: app.pm2_env.pm_exec_path,
       }
     } catch (e) {
