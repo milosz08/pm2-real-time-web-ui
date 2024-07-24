@@ -41,40 +41,40 @@
   <%- include("./partials/errorAlert.ejs") %>
   <div class="col-12">
     <div
-      id="<%= pmId %>-border"
+      id="border-<%= pmId %>"
       class="card mb-3 p-3 container-fluid <%= appDetails.status === 'online' ? 'border-success' : '' %>">
       <div class="row">
         <div class="col-12 col-md-3 mb-3">
           <h4><%= appDetails.name %> (<%= pmId %>)</h4>
           <p class="m-0">
-            CPU: <b id="<%= pmId %>-cpu"><%= appDetails.cpu %></b>
+            CPU: <b id="cpu-<%= pmId %>"><%= appDetails.cpu %></b>
           </p>
           <p class="m-0">
-            Memory: <b id="<%= pmId %>-mem"><%= appDetails.memory %></b>
+            Memory: <b id="mem-<%= pmId %>"><%= appDetails.memory %></b>
           </p>
           <p class="m-0">
-            Uptime: <b id="<%= pmId %>-uptime"><%= appDetails.uptime %></b>
+            Uptime: <b id="uptime-<%= pmId %>"><%= appDetails.uptime %></b>
           </p>
           <p class="m-0">
             Status:
             <b
-              id="<%= pmId %>-status"
+              id="status-<%= pmId %>"
               class="<%= appDetails.status === 'online' ? 'text-success' : '' %>">
               <%= appDetails.status %>
             </b>
           </p>
           <p class="m-0">
-            Process ID: <b id="<%= pmId %>-pid"><%= appDetails.pId %></b>
+            Process ID: <b id="pid-<%= pmId %>"><%= appDetails.pId %></b>
           </p>
         </div>
         <div class="col-12 col-md-9 mb-3 d-flex justify-content-center align-items-center py-2">
           <canvas
-            id="chart"
+            id="chart-<%= pmId %>"
             height="60px"
             data-pm-id="<%= pmId %>"
             class="<%= appDetails.status !== 'online' ? 'd-none' : '' %>">
           </canvas>
-          <i id="<%= pmId %>-alt" class="<%= appDetails.status === 'online' ? 'd-none' : '' %>">
+          <i id="alt-<%= pmId %>" class="<%= appDetails.status === 'online' ? 'd-none' : '' %>">
             Run app to see chart data
           </i>
         </div>

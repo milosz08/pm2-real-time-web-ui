@@ -3,7 +3,7 @@
 const labelColor = '#ffffff';
 const gridColor = '#696969';
 
-const timeMultiplier = 20;
+const timeMultiplier = 40;
 const initBlankElementsCount = window.dataTick * timeMultiplier / 1000;
 
 const dataElements = [
@@ -76,14 +76,14 @@ window.generateLineChartProps = function() {
 };
 
 window.updateLabels = function (pmId, appMonit) {
-  const cpuLabel = document.getElementById(`${pmId}-cpu`);
-  const memLabel = document.getElementById(`${pmId}-mem`);
-  const uptimeLabel = document.getElementById(`${pmId}-uptime`);
-  const statusLabel = document.getElementById(`${pmId}-status`);
-  const pidLabel = document.getElementById(`${pmId}-pid`);
-  const borderedContainer = document.getElementById(`${pmId}-border`);
-  const chartCanvas = document.getElementById(`${pmId}-chart`);
-  const altText = document.getElementById(`${pmId}-alt`);
+  const cpuLabel = document.getElementById(`cpu-${pmId}`);
+  const memLabel = document.getElementById(`mem-${pmId}`);
+  const uptimeLabel = document.getElementById(`uptime-${pmId}`);
+  const statusLabel = document.getElementById(`status-${pmId}`);
+  const pidLabel = document.getElementById(`pid-${pmId}`);
+  const borderedContainer = document.getElementById(`border-${pmId}`);
+  const chartCanvas = document.getElementById(`chart-${pmId}`);
+  const altText = document.getElementById(`alt-${pmId}`);
 
   cpuLabel.innerText = appMonit.cpu;
   memLabel.innerText = appMonit.memory;
