@@ -1,5 +1,5 @@
 <script src="/static/js/manage-app.js"></script>
-<div class="row">
+<div class="row" data-pm-id-root="{{pmId}}">
   <div class="col-12 col-md-6">
     <a href="/" class="btn btn-secondary w-100">
       Return to all apps
@@ -42,8 +42,13 @@
       <div class="col-12">
         <div
           id="border-{{pmId}}"
-          class="card mb-3 p-3 container-fluid {{borderColor}}">
-          <div class="row">
+          class="card mb-3 px-0 container-fluid {{borderColor}}">
+          <div
+              id="waiting-{{pmId}}"
+              class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
+              <div class="spinner-border" role="status"></div>
+            </div>
+          <div class="row p-3">
             <div class="col-12 col-md-3 mb-3">
               <h4 class="d-flex align-items-center gap-2">
                 <span class="material-symbols-outlined">deployed_code</span>
@@ -80,17 +85,30 @@
               <div class="container-fluid">
                 <div class="row gap-2">
                   <button
+                    data-on-disabled="{{pmId}}"
+                    onclick="startApp({{pmId}})"
+                    {{#unless isStopped}} disabled {{/unless}}
+                    class="col-12 col-md btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">not_started</span> Start
+                  </button>
+                  <button
+                    data-on-enabled="{{pmId}}"
                     onclick="reloadApp({{pmId}})"
+                    {{#if isStopped}} disabled {{/if}}
                     class="col-12 col-md btn btn-primary d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">refresh</span> Reload
                   </button>
                   <button
+                    data-on-enabled="{{pmId}}"
                     onclick="restartApp({{pmId}})"
-                    class="col-12 col-md btn btn-success d-flex justify-content-center align-items-center gap-1">
+                    {{#if isStopped}} disabled {{/if}}
+                    class="col-12 col-md btn btn-primary d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
                   </button>
                   <button
+                    data-on-enabled="{{pmId}}"
                     onclick="stopApp({{pmId}})"
+                    {{#if isStopped}} disabled {{/if}}
                     class="col-12 col-md btn btn-danger d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
                   </button>

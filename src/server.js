@@ -11,7 +11,8 @@ const memoryStore = require('memorystore');
 const { engine } = require('express-handlebars');
 
 const config = require('./utils/config');
-const router = require('./router/web');
+const webRouter = require('./router/web');
+const apiRouter = require('./router/api');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 
@@ -48,9 +49,11 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.use('/static', express.static(path.resolve(__dirname, 'public')));
 app.use('/', commonVariables);
 
-app.use(express.urlencoded({ extended: true }));
+app.use('/api', express.json());
+app.use('/', express.urlencoded({ extended: true }));
 
-app.use(router);
+app.use('/', webRouter);
+app.use('/api', apiRouter);
 
 module.exports = {
   io,

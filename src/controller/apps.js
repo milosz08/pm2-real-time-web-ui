@@ -13,6 +13,7 @@ const determinateStatusColor = (status) => {
     case 'errored':
       return 'text-danger';
     case 'paused':
+    case 'stopping':
       return 'text-warning';
     default:
       return '';
@@ -32,6 +33,7 @@ const createAppDetailsObject = (app) => ({
     : '-',
   borderColor: determinateStatusColor(app.pm2_env.status)
     .replace('text', 'border'),
+  isStopped: app.pm2_env.status === 'stopped',
 });
 
 module.exports = {

@@ -2,3 +2,8 @@
   width: 100%;
   max-width: 400px;
 }
+
+.loading-color {
+  background-color: rgba(52, 58, 64, 0.8);
+  z-index: 99;
+}

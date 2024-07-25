@@ -1,28 +1,33 @@
 'use strict';
 
-const commonOptions = {
-  duration: 3000,
-  style: {
-    boxShadow: 'none',
-  },
-};
+const normalColor = '#6c757d';
+const errorColor = '#d9534f';
 
 function createToast(text, color) {
-  return Toastify(
-    Object.assign({}, commonOptions, {
-      text,
-      backgroundColor: color,
-    }),
-  );
+  return Toastify({
+    duration: 3000,
+    text,
+    style: {
+      background: color,
+      boxShadow: 'none',
+    },
+  });
 }
 
 window.toast = {
   info: function (text) {
-    const toast = createToast(text, '#6c757d');
+    const toast = createToast(text, normalColor);
     toast.showToast();
   },
   error: function (text) {
-    const toast = createToast(text, '#d9534f');
+    const toast = createToast(text, errorColor);
+    toast.showToast();
+  },
+  show: function ({ message, status }) {
+    const toast = createToast(
+      message,
+      status === 'error' ? errorColor : normalColor,
+    );
     toast.showToast();
   },
 };

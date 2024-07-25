@@ -22,6 +22,4 @@ router.get('/edit-user/:userId', middleware.userMustBeAdmin, manageUsers.doGetEd
 router.post('/edit-user/:userId', middleware.userMustBeAdmin, manageUsers.doPostEditUser);
 router.get('/delete-user/:userId', middleware.userMustBeAdmin, manageUsers.doGetDeleteUser);
 
-router.get('*', middleware.userMustBeLogged, (_, res) => res.redirect('/'));
-
 module.exports = router;
