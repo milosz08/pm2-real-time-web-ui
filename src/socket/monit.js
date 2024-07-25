@@ -19,7 +19,7 @@ const checkIfRoomHasParticipants = (roomName) => {
       clearInterval(interval);
     }
     monitIntervals.delete(roomName);
-    logger.info(`Removed interval - monit: ${roomName}`);
+    logger.info(`Removed interval - monit: ${roomName}.`);
     return false;
   }
   return true;
@@ -94,7 +94,7 @@ module.exports = {
           }, interval);
         }
         monitIntervals.set(roomName, intervalFunction);
-        logger.info(`Start interval - monit: ${roomName}`);
+        logger.info(`Start interval - monit: ${roomName}.`);
       }
     } catch (e) {
       console.error(e.message);

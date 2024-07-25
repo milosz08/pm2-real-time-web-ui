@@ -21,7 +21,7 @@ const commonAppManagementProcess = async (
       throw new Error('Unable to perform action. Impropriety app state.')
     }
     await actionCallback(pmId);
-    logger.info(`App ID: ${pmId}, ${message}`);
+    logger.info(`App ID: ${pmId}, ${message}.`);
   } catch (e) {
     message = e.message;
     status = 'error';
