@@ -10,8 +10,6 @@ const options = commandLineArgs([
   { name: 'sesTime', type: Number, defaultValue: 60 * 60 * 2 },
 ]);
 
-console.log(process.env.PM2_SECRET_KEY)
-
 module.exports = {
   port: options.port,
   interval: options.interval,
