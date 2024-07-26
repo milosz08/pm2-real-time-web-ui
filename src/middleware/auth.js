@@ -31,17 +31,18 @@ module.exports = {
       next();
     }
   },
-  checkRightsToAppApi(req, res, next) {
+  async checkRightsToAppApi(req, res, next) {
     try {
       const { pmId } = req.query;
       const user = req.session.loggedUser;
       if (!user) {
-        throw new Error();
+        throw new Error(`Not logged user. Action: ${action}: ID ${pmId}.`);
       }
       const action = req.path.substring(1);
-      const accountApps = [0,3]; // TODO: get account apps from DB
-      if (accountApps.length !== 0 && !accountApps.includes(Number(pmId))) {
-        throw new Error();
+      const account = await AccountModel.findById(user.id);
+      const accountApps = account.getApps(action);
+      if (!account.checkAppPermission(accountApps, Number(pmId))) {
+        throw new Error(`Attempt to invoke ${action}: ID ${pmId} with insufficient permissions.`);
       }
     } catch (e) {
       logger.error(e.message);

@@ -4,6 +4,8 @@ const pm2 = require('pm2');
 const byteSize = require('byte-size');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
+const AccountModel = require('../db/accountSchema');
+const utils = require('../db/utils');
 
 const determinateStatusColor = (status) => {
   switch (status) {
@@ -20,7 +22,7 @@ const determinateStatusColor = (status) => {
   }
 };
 
-const createAppDetailsObject = (app) => ({
+const createAppDetailsObject = (account, app) => ({
   pmId: app.pm_id,
   pId: app.pid,
   name: app.name,
@@ -34,20 +36,24 @@ const createAppDetailsObject = (app) => ({
   borderColor: determinateStatusColor(app.pm2_env.status)
     .replace('text', 'border'),
   isStopped: app.pm2_env.status === 'stopped',
+  enabledActions: account.getActionsForApp(app.pm_id),
+  isAdmin: account.role === utils.adminRole,
 });
 
 module.exports = {
-  async doGetApps(_, res) {
+  async doGetApps(req, res) {
     let pm2Apps = [];
     let error = null;
     try {
-      const accountApps = [0,3]; // TODO: get account apps from DB
+      const user = req.session.loggedUser;
+      const account = await AccountModel.findById(user.id);
+      const accountApps = account.getApps('view');
       await pm2Async.connect();
       const apps = await pm2Async.getListOfProcesses();
       pm2.disconnect();
       pm2Apps = apps
-        .filter(({ pm_id }) => accountApps.includes(pm_id) || accountApps.length === 0)
-        .map(app => (createAppDetailsObject(app)));
+        .filter(({ pm_id }) => account.checkAppPermission(accountApps, pm_id))
+        .map(app => (createAppDetailsObject(account, app)));
     } catch (e) {
       error = e.message;
     }
@@ -62,15 +68,17 @@ module.exports = {
     let error = null;
     let appDetails;
     try {
-      const accountApps = [0,3]; // TODO: get account apps from DB
-      if (accountApps.length !== 0 && !accountApps.includes(Number(pmId))) {
+      const user = req.session.loggedUser;
+      const account = await AccountModel.findById(user.id);
+      const accountApps = account.getApps('view');
+      if (!account.checkAppPermission(accountApps, Number(pmId))) {
         res.redirect('/');
         return;
       }
       await pm2Async.connect();
       const app = await pm2Async.getProcessDetails(pmId);
       appDetails = {
-        ...createAppDetailsObject(app),
+        ...createAppDetailsObject(account, app),
         execPath: app.pm2_env.pm_exec_path,
       }
     } catch (e) {

@@ -1,8 +1,10 @@
 'use strict';
 
-const { monitIo, consoleIo, sessionStore } = require('../server');
+const { monitIo, consoleIo } = require('../server');
 const monit = require('./monit');
 const console = require('./console');
+const AccountModel = require('../db/accountSchema');
+const sessionStore = require('../utils/session');
 
 const authenticationHandler = async (socket, next) => {
   try {
@@ -21,9 +23,10 @@ const authenticationHandler = async (socket, next) => {
         resolve(session);
       });
     });
-    const accountApps = [0,3]; // TODO: get account apps from DB
+    const account = await AccountModel.findById(session.loggedUser.id);
+    const accountApps = account.getApps('view');
     const { id } = socket.handshake.query;
-    if (id && (accountApps.length !== 0 && !accountApps.includes(Number(id)))) {
+    if (id && !account.checkAppPermission(accountApps, Number(id))) {
       throw new Error('WS forbidden channel error');
     }
     socket.session = session;
