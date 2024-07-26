@@ -3,12 +3,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const uniqueValidator = require('mongoose-unique-validator');
+const utils = require('./utils');
 
 const accountSchema = mongoose.Schema({
   login: {
     type: String,
     trim: true,
-    required: true,
+    required: [ true, 'Login is required.' ],
     unique: true,
     maxlength: [ 30, 'Login must have less or equals 30 characters.' ],
     validate: [
@@ -20,17 +21,13 @@ const accountSchema = mongoose.Schema({
     type: String,
     required: [ true, "Password is required." ],
     minlength: [ 8, "Password must have at least 8 characters." ],
-    validate: [
-      password => !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(password),
-      'Password must have at least 8 characters and contains big letter, small, digit and special character.',
-    ],
   },
   role: {
     type: String,
     required: true,
-    default: 'user',
+    default: utils.userRole,
     validate: {
-      validator: roleName => /^(user|admin)$/.test(roleName),
+      validator: roleName => [utils.adminRole, utils.userRole].includes(roleName),
       msg: 'Role name must be user or admin.',
     },
   },
@@ -43,7 +40,7 @@ const accountSchema = mongoose.Schema({
     {
       instancePm2Id: {
         type: Number,
-        required: [ true, "PM2 instance ID field is required." ],
+        required: true,
       },
       availableActions: {
         type: [String],
@@ -52,8 +49,7 @@ const accountSchema = mongoose.Schema({
         validate: [
           {
             validator: actions => {
-              const validActions = ['start', 'reload', 'restart', 'stop'];
-              return actions.every(action => validActions.includes(action));
+              return actions.every(action => utils.validActions.includes(action));
             },
             msg: props => `${props.value} is invalid action.`,
           },
@@ -72,14 +68,50 @@ accountSchema.plugin(uniqueValidator, {
   message: 'Followed {PATH} already exist.',
 });
 
-accountSchema.path("password").set(rawPassword => {
-  const salt = bcrypt.genSaltSync(10);
-  return bcrypt.hashSync(rawPassword, salt);
+accountSchema.pre('save', async function (next) {
+  const account = this;
+  if (!account.isModified('password')) {
+    next();
+    return;
+  }
+  if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(account.password)) {
+    account.invalidate(
+      'password',
+    'Password must have at least 8 characters and contains big letter, small, digit and special character.',
+    );
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(account.password, salt);
+  account.password = hash;
+  next();
 });
 
 accountSchema.methods = {
   async compareHash(plainTextPassword) {
     return await bcrypt.compare(plainTextPassword, this.password);
+  },
+  getApps(action) {
+    return this.permissions
+      .filter(({ availableActions }) => !action || availableActions.includes(action))
+      .map(({ instancePm2Id }) => instancePm2Id);
+  },
+  checkAppPermission(apps, appId) {
+    return this.role === utils.adminRole || apps.includes(appId)
+  },
+  getActionsForApp(pmId) {
+    let actionsList = [];
+    if (this.role === utils.adminRole) {
+      actionsList =  utils.validActions.filter(action => action !== 'view');
+    }
+    const permissions = this.permissions.find(({ instancePm2Id }) => pmId === instancePm2Id);
+    if (permissions) {
+      actionsList = permissions.availableActions;
+    }
+    return utils.validActions.reduce((acc, action) => {
+      acc[action] = actionsList.includes(action);
+      return acc;
+    }, {});
   },
 };
 

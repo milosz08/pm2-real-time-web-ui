@@ -1,0 +1,74 @@
+<div class="row gap-3">
+  {{#if pageAlert}}
+    {{#with pageAlert}}
+      <div class="col-12">
+        <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+          {{message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    {{/with}}
+  {{/if}}
+  <div class="col-12">
+    <a href="/add-account" class="btn btn-primary w-100">Add new account</a>
+  </div>
+  {{> errorAlert}}
+  {{#if isAccountsEmpty}}
+    <div class="col-12">
+      <div class="alert alert-warning show" role="alert">
+        Not found additional app accounts.
+      </div>
+    </div>
+  {{/if}}
+  {{#unless isAccountsEmpty}}
+    <ul>
+      {{#each accounts}}
+        <div class="modal fade" id="confirmationModal-{{id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5">
+                  Delete account <b>{{login}}</b>
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete the <b>{{login}}</b> account?
+                This operation cannot be undone.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Close
+                </button>
+                <a href="/delete-account/{{id}}" class="btn btn-danger">
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <li class="card mb-3 px-0 container-fluid">
+          <div class="row p-3">
+            <div class="col-12 col-md-10 d-flex flex-column justify-content-center">
+              <h4>{{login}}</h4>
+              <p class="mb-0">{{description}}</p>
+            </div>
+            <div class="col-12 col-md-2 d-flex flex-column justify-content-between gap-2">
+              <a
+                href="/edit-account/{{id}}"
+                class="col-12 col-md btn btn-primary btn-sm d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">edit</span> Edit
+              </a>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#confirmationModal-{{id}}"
+                class="col-12 col-md btn btn-danger btn-sm d-flex justify-content-center align-items-center gap-1">
+                <span class="material-symbols-outlined fs-6">delete_forever</span> Delete
+              </button>
+            </div>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  {{/unless}}
+</div>

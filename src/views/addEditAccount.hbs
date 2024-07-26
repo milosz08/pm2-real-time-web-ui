@@ -1,0 +1,144 @@
+<div class="row gap-y-3">
+  {{> errorAlert}}
+</div>
+<h3 class="my-3">{{pageType}} account</h3>
+<form class="row gap-y-3" method="post">
+  <div class="col-12 col-md-6 mb-3">
+    <label for="login" class="form-label">Account login</label>
+    <input
+      type="text"
+      class="form-control {{#if errors.login}} is-invalid {{/if}}"
+      id="login"
+      name="login"
+      value="{{account.login}}">
+    <div class="invalid-feedback">
+      {{errors.login.message}}
+    </div>
+  </div>
+  <div class="col-12 col-md-6 mb-3">
+    <label for="password" class="form-label">Account password</label>
+    <div>
+      <div class="input-group has-validation">
+        <input
+          type="password"
+          class="form-control {{#if errors.password}} is-invalid {{/if}}"
+          id="password"
+          name="password"
+          value="{{account.password}}"
+          {{#if disablePasswordField}} disabled {{/if}}>
+        <span id="passwordToggleBtn" class="input-group-text" role="button">
+          <span class="material-symbols-outlined fs-6" id="passwordIcon">visibility</span>
+        </span>
+        <div class="invalid-feedback">
+          {{errors.password.message}}
+        </div>
+      </div>
+      {{#if omitPasswordCheckbox}}
+        <div class="form-check mt-1">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="omitPassword"
+            name="omitPassword"
+            {{omitPasswordLabel}}>
+          <label class="form-check-label" for="omitPassword">Omit password</label>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+  <div class="col-12 mb-3">
+    <label for="description" class="form-label">Additional description (not required)</label>
+    <textarea
+      class="form-control {{#if errors.description}} is-invalid {{/if}}"
+      id="description"
+      name="description"
+      rows="3"
+      maxlength="1000">{{account.description}}</textarea>
+    <div class="invalid-feedback">
+      {{errors.description.message}}
+    </div>
+  </div>
+  <div class="col-12 mb-3">
+    <p>Selected apps</p>
+    {{#if appsIsEmpty}}
+      <div class="col-12">
+        <div class="alert alert-warning show" role="alert">
+          Not found any PM2 saved processes.
+        </div>
+      </div>
+    {{/if}}
+    {{#each apps}}
+      <div class="card p-3 fluid-container mb-2">
+        <div class="row" id="accessContainer">
+          <div class="col-5">
+            <h6 class="mb-0">{{name}} ({{id}})</h6>
+          </div>
+          <div class="col-7 fluid-container">
+            <div class="row">
+              <div class="col-12 col-md form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="all-{{id}}"
+                  {{allCheckLabel}}>
+                <label class="form-check-label" for="all-{{id}}">Select all</label>
+              </div>
+              <div class="col-12 col-md form-check d-flex justify-content-center gap-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="view-{{id}}"
+                  id="view-{{id}}"
+                  {{checkedLabels.view}}>
+                <label class="form-check-label" for="view-{{id}}">View</label>
+              </div>
+              <div class="col-12 col-md form-check d-flex justify-content-center gap-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="start-{{id}}"
+                  id="start-{{id}}"
+                  {{checkedLabels.start}}>
+                <label class="form-check-label" for="start-{{id}}">Start</label>
+              </div>
+              <div class="col-12 col-md form-check d-flex justify-content-center gap-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="reload-{{id}}"
+                  id="reload-{{id}}"
+                  {{checkedLabels.reload}}>
+                <label class="form-check-label" for="reload-{{id}}">Reload</label>
+              </div>
+              <div class="col-12 col-md form-check d-flex justify-content-center gap-2">
+                <input
+                class="form-check-input"
+                type="checkbox"
+                name="restart-{{id}}"
+                id="restart-{{id}}"
+                {{checkedLabels.restart}}>
+                <label class="form-check-label" for="restart-{{id}}">Restart</label>
+              </div>
+              <div class="col-12 col-md form-check d-flex justify-content-center gap-2">
+                <input
+                class="form-check-input"
+                type="checkbox"
+                name="stop-{{id}}"
+                id="stop-{{id}}"
+                {{checkedLabels.stop}}>
+                <label class="form-check-label" for="stop-{{id}}">Stop</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  <div class="col-12 col-md-6">
+    <a href="/manage-accounts" class="btn btn-secondary w-100">Discard changes</a>
+  </div>
+  <div class="col-12 col-md-6">
+    <button class="btn btn-primary w-100">{{pageType}} account</button>
+  </div>
+</form>
+<script type="text/javascript" src="/static/js/add-edit-account.js"></script>

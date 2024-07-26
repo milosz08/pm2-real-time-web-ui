@@ -3,6 +3,7 @@
 const pm2 = require('pm2');
 const pm2Async = require('../utils/pm2AsyncApi');
 const logger = require('../utils/logger');
+const AccountModel = require('../db/accountSchema');
 
 const commonAppManagementProcess = async (
   req,
@@ -76,6 +77,16 @@ module.exports = {
     try {
       await pm2Async.connect();
       await pm2Async.deleteApp(pmId);
+      await AccountModel.updateMany(
+        {},
+        {
+          $pull: {
+            permissions: {
+              instancePm2Id: pmId
+            },
+          },
+        },
+      );
       logger.info(`App ID: ${pmId}, ${message}.`);
     } catch (e) {
       message = e.message;
