@@ -16,10 +16,16 @@
   <script type="text/javascript">
     window.dataTick = {{dataTick}};
     window.sessionTime = {{sessionTime}};
+    {{#unless isAdmin}}
+      window.socketId = '{{loggedUser.socketId}}';
+    {{/unless}}
   </script>
   {{#if loggedUser}}
     <script type="text/javascript" src="/static/js/session-guard.js"></script>
   {{/if}}
+  {{#unless isAdmin}}
+    <script type="text/javascript" src="/static/js/session-revoker.js"></script>
+  {{/unless}}
 </head>
 <body class="d-flex flex-column min-vh-100">
   <header>

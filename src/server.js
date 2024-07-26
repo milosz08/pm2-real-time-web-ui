@@ -7,22 +7,16 @@ const expressSession = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { Server } = require('socket.io');
-const memoryStore = require('memorystore');
 const { engine } = require('express-handlebars');
 
 const config = require('./utils/config');
-const webRouter = require('./router/web');
-const apiRouter = require('./router/api');
+const sessionStore = require('./utils/session');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 const db = require('./db/config');
 
 const app = express();
 const httpServer = http.createServer(app);
-const MemoryStore = memoryStore(expressSession);
-const sessionStore = new MemoryStore({
-  checkPeriod: config.sessionMaxLife,
-});
 
 db.connect();
 db.createDefaultAdminAccount();
@@ -30,6 +24,14 @@ db.createDefaultAdminAccount();
 const io = new Server(httpServer);
 const monitIo = io.of('/monit');
 const consoleIo = io.of('/console');
+const sessionIo = io.of('/session');
+
+module.exports = {
+  io,
+  monitIo,
+  consoleIo,
+  sessionIo,
+};
 
 app.use(nocache());
 app.use(cookieParser());
@@ -56,15 +58,11 @@ app.use('/', commonVariables);
 app.use('/api', express.json());
 app.use('/', express.urlencoded({ extended: true }));
 
+const webRouter = require('./router/web');
+const apiRouter = require('./router/api');
+
 app.use('/', webRouter);
 app.use('/api', apiRouter);
-
-module.exports = {
-  io,
-  monitIo,
-  consoleIo,
-  sessionStore,
-};
 
 require('./socket/handler');
 
