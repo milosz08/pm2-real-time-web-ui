@@ -2,6 +2,9 @@
 
 const commandLineArgs = require('command-line-args');
 const { v4: uuidv4 } = require('uuid');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const options = commandLineArgs([
   { name: 'port', type: Number, defaultValue: 3000 },
@@ -17,4 +20,7 @@ module.exports = {
   sessionMaxLife: options.sesTime,
   sessionSecret: process.env.PM2_SECRET_KEY || uuidv4(),
   isProd: process.env.NODE_ENV === 'production',
+  dbConnection: process.env.PM2_DB_CONNECTION || 'mongodb://root:root@127.0.0.1:9191/db?authSource=admin',
+  adminLogin: process.env.PM2_ADMIN_LOGIN,
+  adminPassword: process.env.PM2_ADMIN_PASSWORD,
 };

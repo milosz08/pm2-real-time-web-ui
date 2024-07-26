@@ -15,6 +15,7 @@ const webRouter = require('./router/web');
 const apiRouter = require('./router/api');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
+const db = require('./db/config');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -22,6 +23,9 @@ const MemoryStore = memoryStore(expressSession);
 const sessionStore = new MemoryStore({
   checkPeriod: config.sessionMaxLife,
 });
+
+db.connect();
+db.createDefaultAdminAccount();
 
 const io = new Server(httpServer);
 const monitIo = io.of('/monit');
@@ -63,6 +67,10 @@ module.exports = {
 };
 
 require('./socket/handler');
+
+process.on('SIGINT', () => db.disconnect('SIGINT'));
+process.on('SIGTERM', () => db.disconnect('SIGTERM'));
+process.on('SIGQUIT', () => db.disconnect('SIGQUIT'));
 
 httpServer.listen(config.port, () => {
   logger.info(`Server started at port: ${config.port}.`)
