@@ -41,7 +41,7 @@ const perTickSendMonit = async (roomName, accountApps) => {
     if (checkIfRoomHasParticipants(roomName)) {
       const apps = await pm2Async.getListOfProcesses();
       const monitAppAsMap = apps.reduce((acc, app) => {
-        if (accountApps.size === 0 || accountApps.some(pmId => app.pm_id === pmId)) {
+        if (accountApps.length === 0 || accountApps.some(pmId => app.pm_id === pmId)) {
           acc[app.pm_id] = constructAppDetails(app);
         }
         return acc;

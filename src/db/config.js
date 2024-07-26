@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const config = require('../utils/config');
 const logger = require('../utils/logger');
 const AccountModel = require('./accountSchema');
+const utils = require('../db/utils');
 
 module.exports = {
   connect() {
@@ -13,7 +14,7 @@ module.exports = {
   },
   async createDefaultAdminAccount() {
     try {
-      const account = await AccountModel.findOne({ role: 'admin' });
+      const account = await AccountModel.findOne({ role: utils.adminRole });
       if (account) {
         logger.info('Admin account was already created. 0 row affected.');
         return;
@@ -21,7 +22,7 @@ module.exports = {
       const adminAccount = new AccountModel({
         login: config.adminLogin,
         password: config.adminPassword,
-        role: 'admin',
+        role: utils.adminRole,
         permissions: [],
       });
       await adminAccount.save();

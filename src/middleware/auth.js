@@ -1,5 +1,9 @@
 'use strict';
 
+const AccountModel = require('../db/accountSchema');
+const utils = require('../db/utils');
+const logger = require('../utils/logger');
+
 module.exports = {
   userMustBeLogged(req, res, next) {
     const user = req.session.loggedUser;
@@ -20,7 +24,7 @@ module.exports = {
   },
   userMustBeAdmin(req, res, next) { 
     const user = req.session.loggedUser;
-    if (!user || user.role !== 'admin') {
+    if (!user || user.role !== utils.adminRole) {
       res.redirect('/');
     } else {
       res.locals.loggedUser = req.session.loggedUser;
@@ -40,8 +44,9 @@ module.exports = {
         throw new Error();
       }
     } catch (e) {
+      logger.error(e.message);
       res.json({
-        message: 'No permission for this resource',
+        message: 'No permission for this action',
         status: 'error',
       });
       return;

@@ -80,7 +80,11 @@ function stopApp(pmId) {
 }
 
 function deleteApp(pmId) {
-  commonApiCall('delete', pmId).then(() => {
-    window.location.href = '/';
+  commonApiCall('delete', pmId).then(data => {
+    if (data.status !== 'error') {
+      window.location.href = '/';
+    } else {
+      window.toast.show(data);
+    }
   });
 }

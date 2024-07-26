@@ -9,6 +9,7 @@ function onContentLoad() {
     query: {
       id,
     },
+    forceNew: true,
   });
 
   socket.on('logs:dump', tick => {

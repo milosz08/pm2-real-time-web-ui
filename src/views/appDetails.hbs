@@ -12,42 +12,42 @@
   {{#unless error}}
     {{#with appDetails}}
       <div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5">
-              Delete app <b>{{name}} ({{pmId}})</b>
-            </h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to remove the <b>{{name}}</b> application?
-            This operation cannot be undone.
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Close
-            </button>
-            <button
-              type="button"
-              data-bs-dismiss="modal"
-              onclick="deleteApp({{pmId}})"
-              class="btn btn-danger">
-            Delete
-          </button>
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5">
+                Delete app <b>{{name}} ({{pmId}})</b>
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete the <b>{{name}}</b> application?
+              This operation cannot be undone.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button
+                type="button"
+                data-bs-dismiss="modal"
+                onclick="deleteApp({{pmId}})"
+                class="btn btn-danger">
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
       <div class="col-12">
         <div
           id="border-{{pmId}}"
           class="card mb-3 px-0 container-fluid {{borderColor}}">
           <div
-              id="waiting-{{pmId}}"
-              class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
-              <div class="spinner-border" role="status"></div>
-            </div>
+            id="waiting-{{pmId}}"
+            class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
+            <div class="spinner-border" role="status"></div>
+          </div>
           <div class="row p-3">
             <div class="col-12 col-md-3 mb-3">
               <h4 class="d-flex align-items-center gap-2">
@@ -84,6 +84,7 @@
             <div class="col-12 mb-3">
               <div class="container-fluid">
                 <div class="row gap-2">
+                  {{#if enabledActions.start}}
                   <button
                     data-on-disabled="{{pmId}}"
                     onclick="startApp({{pmId}})"
@@ -91,6 +92,8 @@
                     class="col-12 col-md btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">not_started</span> Start
                   </button>
+                  {{/if}}
+                  {{#if enabledActions.reload}}
                   <button
                     data-on-enabled="{{pmId}}"
                     onclick="reloadApp({{pmId}})"
@@ -98,6 +101,8 @@
                     class="col-12 col-md btn btn-primary d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">refresh</span> Reload
                   </button>
+                  {{/if}}
+                  {{#if enabledActions.restart}}
                   <button
                     data-on-enabled="{{pmId}}"
                     onclick="restartApp({{pmId}})"
@@ -105,6 +110,8 @@
                     class="col-12 col-md btn btn-primary d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
                   </button>
+                  {{/if}}
+                  {{#if enabledActions.stop}}
                   <button
                     data-on-enabled="{{pmId}}"
                     onclick="stopApp({{pmId}})"
@@ -112,12 +119,15 @@
                     class="col-12 col-md btn btn-danger d-flex justify-content-center align-items-center gap-1">
                     <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
                   </button>
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmationModal"
-                    class="col-12 col-md btn btn-outline-danger d-flex justify-content-center align-items-center gap-1">
-                    <span class="material-symbols-outlined fs-6">delete_forever</span> Delete
-                  </button>
+                  {{/if}}
+                  {{#if isAdmin}}
+                    <button
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmationModal"
+                      class="col-12 col-md btn btn-outline-danger d-flex justify-content-center align-items-center gap-1">
+                      <span class="material-symbols-outlined fs-6">delete_forever</span> Delete
+                    </button>
+                  {{/if}}
                 </div>
               </div>
             </div>
