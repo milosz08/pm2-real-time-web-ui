@@ -18,7 +18,7 @@ module.exports = {
       next();
     }
   },
-  userMustBeAdmin(req, res, next) {
+  userMustBeAdmin(req, res, next) { 
     const user = req.session.loggedUser;
     if (!user || user.role !== 'admin') {
       res.redirect('/');
@@ -34,8 +34,9 @@ module.exports = {
       if (!user) {
         throw new Error();
       }
-      const userApps = [0,3]; // TODO: get user apps from DB
-      if (userApps.length !== 0 && !userApps.includes(Number(pmId))) {
+      const action = req.path.substring(1);
+      const accountApps = [0,3]; // TODO: get account apps from DB
+      if (accountApps.length !== 0 && !accountApps.includes(Number(pmId))) {
         throw new Error();
       }
     } catch (e) {

@@ -28,10 +28,10 @@
         <div class="d-flex align-items-center">
           <img src="/static/favicon-32x32.png" class="pe-3" width="auto" height="30"/>
           <a class="navbar-brand" href="/">PM2 Web UI</a>
-          {{#if loggedUser.isAdmin}}
+          {{#if isAdmin}}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" href="/manage-users">Manage users</a>
+                <a class="nav-link" href="/manage-accounts">Manage accounts</a>
               </li>
             </ul>
           {{/if}}

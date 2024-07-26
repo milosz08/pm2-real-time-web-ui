@@ -36,12 +36,12 @@ const constructAppDetails = (app) => ({
   status: app.pm2_env.status,
 });
 
-const perTickSendMonit = async (roomName, userApps) => {
+const perTickSendMonit = async (roomName, accountApps) => {
   try {
     if (checkIfRoomHasParticipants(roomName)) {
       const apps = await pm2Async.getListOfProcesses();
       const monitAppAsMap = apps.reduce((acc, app) => {
-        if (userApps.size === 0 || userApps.some(pmId => app.pm_id === pmId)) {
+        if (accountApps.size === 0 || accountApps.some(pmId => app.pm_id === pmId)) {
           acc[app.pm_id] = constructAppDetails(app);
         }
         return acc;
@@ -61,10 +61,10 @@ const perTickSingleSendMonit = async (roomName, pmId) => {
 };
 
 const determinateRoomName = (socket) => {
-  const userApps = socket.userApps;
+  const accountApps = socket.accountApps;
   let roomName = 'all';
-  if (userApps.length !== 0 && !socket.broadcasting.id) {
-    roomName += `-${userApps.join('-')}`;
+  if (accountApps.length !== 0 && !socket.broadcasting.id) {
+    roomName += `-${accountApps.join('-')}`;
   } else if (socket.broadcasting.id) {
     roomName = `single-${socket.broadcasting.id}`;
   }
@@ -86,7 +86,7 @@ module.exports = {
         let intervalFunction;
         if (!socket.broadcasting.id) {
           intervalFunction = setInterval(() => {
-            perTickSendMonit(roomName, socket.userApps);
+            perTickSendMonit(roomName, socket.accountApps);
           }, interval);
         } else {
           intervalFunction = setInterval(() => {

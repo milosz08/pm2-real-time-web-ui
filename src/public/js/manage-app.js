@@ -80,7 +80,7 @@ function stopApp(pmId) {
 }
 
 function deleteApp(pmId) {
-  commonApiCall('delete', pmId).then(data => {
-    window.toast.show(data);
+  commonApiCall('delete', pmId).then(() => {
+    window.location.href = '/';
   });
 }

@@ -65,5 +65,5 @@ module.exports = {
 require('./socket/handler');
 
 httpServer.listen(config.port, () => {
-  logger.info(`Server started at port: ${config.port}`)
+  logger.info(`Server started at port: ${config.port}.`)
 });

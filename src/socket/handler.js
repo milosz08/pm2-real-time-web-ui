@@ -21,14 +21,14 @@ const authenticationHandler = async (socket, next) => {
         resolve(session);
       });
     });
-    const userApps = [0,3]; // TODO: get user apps from DB
+    const accountApps = [0,3]; // TODO: get account apps from DB
     const { id } = socket.handshake.query;
-    if (id && (userApps.length !== 0 && !userApps.includes(Number(id)))) {
+    if (id && (accountApps.length !== 0 && !accountApps.includes(Number(id)))) {
       throw new Error('WS forbidden channel error');
     }
     socket.session = session;
     socket.broadcasting = socket.handshake.query;
-    socket.userApps = userApps;
+    socket.accountApps = accountApps;
     next();
   } catch (e) {
     next(e);

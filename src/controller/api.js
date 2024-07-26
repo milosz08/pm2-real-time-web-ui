@@ -75,10 +75,12 @@ module.exports = {
     let status = 'success';
     try {
       await pm2Async.connect();
-      await actionCallback(pmId);
+      await pm2Async.deleteApp(pmId);
+      logger.info(`App ID: ${pmId}, ${message}.`);
     } catch (e) {
       message = e.message;
       status = 'error';
+      logger.error(e.message);
     } finally {
       pm2.disconnect();
     }

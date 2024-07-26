@@ -41,12 +41,12 @@ module.exports = {
     let pm2Apps = [];
     let error = null;
     try {
-      const userApps = [0,3]; // TODO: get user apps from DB
+      const accountApps = [0,3]; // TODO: get account apps from DB
       await pm2Async.connect();
       const apps = await pm2Async.getListOfProcesses();
       pm2.disconnect();
       pm2Apps = apps
-        .filter(({ pm_id }) => userApps.includes(pm_id) || userApps.length === 0)
+        .filter(({ pm_id }) => accountApps.includes(pm_id) || accountApps.length === 0)
         .map(app => (createAppDetailsObject(app)));
     } catch (e) {
       error = e.message;
@@ -62,8 +62,8 @@ module.exports = {
     let error = null;
     let appDetails;
     try {
-      const userApps = [0,3]; // TODO: get user apps from DB
-      if (userApps.length !== 0 && !userApps.includes(Number(pmId))) {
+      const accountApps = [0,3]; // TODO: get account apps from DB
+      if (accountApps.length !== 0 && !accountApps.includes(Number(pmId))) {
         res.redirect('/');
         return;
       }
