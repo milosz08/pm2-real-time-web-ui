@@ -58,5 +58,13 @@ module.exports = {
       pm2.delete(pmId, (err, app) =>
         commonPm2PromiseCallback(resolve, reject, err, app, 'delete'));
     });
-  }
+  },
+  async launchBus() {
+    return await new Promise((resolve, reject) => {
+      pm2.launchBus((err, bus) => err
+        ? reject(new Error('Unable to launch bus'))
+        : resolve(bus)
+      );
+    });
+  },
 };

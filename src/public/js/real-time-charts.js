@@ -57,7 +57,7 @@ function onContentLoad() {
     window.toast.error('Your browser not support SSE!');
     return;
   }
-  const eventSource = new window.EventSource('/event/all');
+  const eventSource = new window.EventSource('/api/event/all');
 
   eventSource.onmessage = function (event) {
     updateChartOnTick(JSON.parse(event.data));

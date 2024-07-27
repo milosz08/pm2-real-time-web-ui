@@ -7,3 +7,9 @@
   background-color: rgba(52, 58, 64, 0.8);
   z-index: 99;
 }
+
+.console-container {
+  height: 400px;
+  min-height: 400px;
+  resize: vertical;
+}

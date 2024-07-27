@@ -9,7 +9,11 @@ const AccountModel = require('../db/accountSchema');
 const pm2AsyncApi = require('../utils/pm2AsyncApi');
 
 const formatMessage = (message) => {
-  return `data: ${JSON.stringify(message)}\n\n`;
+  let data = message;
+  if (typeof message === 'object') {
+    data = JSON.stringify(message)
+  }
+  return `data: ${data}\n\n`;
 };
 
 const constructAppDetails = (app) => ({
@@ -43,12 +47,30 @@ const onTickSelected = async (res, pmId) => {
   } catch (e) {}
 };
 
+const checkIfUserHasAccess = async (user, pmId) => {
+  const account = await AccountModel.findById(user.id);
+  const accountApps = account.getApps('view');
+  if (user.role !== config.adminRole && !accountApps.includes(Number(pmId))) {
+    res.end();
+    return;
+  }
+  await pm2Async.getProcessDetails(pmId);
+};
+
 const onCloseConnectionByClient = (req, res, intervalId, functionName) => {
   const user = req.session.loggedUser;
   res.on('close', () => {
     logger.info(`${functionName}: Connection closed with client ${user.login}.`);
     clearInterval(intervalId);
     res.end();
+  });
+};
+
+const startListeningAppLogs = (res, pmId, bus) => {
+  bus.on('log:out', log => {
+    if (log.process.pm_id === Number(pmId)) {
+      res.write(formatMessage(log.data));
+    }
   });
 };
 
@@ -84,18 +106,7 @@ module.exports = {
     try {
       const user = req.session.loggedUser;
       logger.info(`sendMonitSingleAppData: Client ${user.login} connected.`);
-
-      const account = await AccountModel.findById(user.id);
-      const accountApps = account.getApps('view');
-
-      if (user.role !== utils.adminRole && !accountApps.includes(Number(pmId))) {
-        pm2.disconnect();
-        res.end();
-        return;
-      }
-      await pm2Async.connect();
-      await pm2Async.getProcessDetails(pmId);
-
+      await checkIfUserHasAccess(user, pmId);
       intervalId = setInterval(
         async () => await onTickSelected(res, pmId),
         config.interval,
@@ -107,7 +118,26 @@ module.exports = {
       res.end();
     }
   },
-  sendConsoleAppData(req, res) {
-
+  async sendConsoleAppData(req, res) {
+    const { pmId } = req.params;
+    try {
+      const user = req.session.loggedUser;
+      logger.info(`sendConsoleAppData: Client ${user.login} connected.`);
+      await checkIfUserHasAccess(user, pmId);
+      const bus = await pm2AsyncApi.launchBus();
+      startListeningAppLogs(res, pmId, bus);
+      bus.on('process:event', packet => {
+        if (packet.process.pm_id === Number(pmId)) {
+          startListeningAppLogs(res, pmId, bus);
+        }
+      });
+      res.on('close', () => {
+        logger.info(`sendConsoleAppData: Connection closed with client ${user.login}.`);
+        res.end();
+      });
+    } catch (e) {
+      logger.error(e.message);
+      res.end();
+    }
   },
 };
