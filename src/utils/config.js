@@ -9,18 +9,19 @@ dotenv.config();
 const options = commandLineArgs([
   { name: 'port', type: Number, defaultValue: 3000 },
   { name: 'interval', type: Number, defaultValue: 1000 },
-  { name: 'logsInterval', type: Number, defaultValue: 4000 },
   { name: 'sesTime', type: Number, defaultValue: 60 * 60 * 2 },
 ]);
 
 module.exports = {
   port: options.port,
   interval: options.interval,
-  logsInterval: options.logsInterval,
   sessionMaxLife: options.sesTime,
   sessionSecret: process.env.PM2_SECRET_KEY || uuidv4(),
   isProd: process.env.NODE_ENV === 'production',
   dbConnection: process.env.PM2_DB_CONNECTION || 'mongodb://root:root@127.0.0.1:9191/db?authSource=admin',
   adminLogin: process.env.PM2_ADMIN_LOGIN,
   adminPassword: process.env.PM2_ADMIN_PASSWORD,
+  validActions: ['view', 'start', 'reload', 'restart', 'stop'],
+  adminRole: 'admin',
+  userRole: 'user',
 };

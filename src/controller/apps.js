@@ -5,7 +5,7 @@ const byteSize = require('byte-size');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
 const AccountModel = require('../db/accountSchema');
-const utils = require('../db/utils');
+const config = require('../utils/config');
 
 const determinateStatusColor = (status) => {
   switch (status) {
@@ -37,7 +37,7 @@ const createAppDetailsObject = (account, app) => ({
     .replace('text', 'border'),
   isStopped: app.pm2_env.status === 'stopped',
   enabledActions: account.getActionsForApp(app.pm_id),
-  isAdmin: account.role === utils.adminRole,
+  isAdmin: account.role === config.adminRole,
 });
 
 module.exports = {

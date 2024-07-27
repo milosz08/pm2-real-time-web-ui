@@ -9,7 +9,7 @@ const authenticationHandler = async (socket, next) => {
     const sessionID = cookies && cookies.split('connect.sid=')[1]
       ?.split('.')[0]
       ?.substring(4);
-    socket.session = session.getSessionBySid(sessionID);
+    socket.session = await session.getSessionBySid(sessionID);
     next();
   } catch (e) {
     next(e);

@@ -1,7 +1,7 @@
 'use strict';
 
 const AccountModel = require('../db/accountSchema');
-const utils = require('../db/utils');
+const config = require('../utils/config');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
   },
   userMustBeAdmin(req, res, next) { 
     const user = req.session.loggedUser;
-    if (!user || user.role !== utils.adminRole) {
+    if (!user || user.role !== config.adminRole) {
       res.redirect('/');
     } else {
       res.locals.loggedUser = req.session.loggedUser;

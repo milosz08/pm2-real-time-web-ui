@@ -4,7 +4,7 @@ const pm2 = require('pm2');
 const logger = require('../utils/logger');
 const pm2Async = require('../utils/pm2AsyncApi');
 const AccountModel = require('../db/accountSchema');
-const utils = require('../db/utils');
+const config = require('../utils/config');
 const session = require('../utils/session');
 const { sessionIo } = require('../server');
 
@@ -34,7 +34,7 @@ const parseAppAndActions = async (actions) => {
       id: pm_id,
       name,
       checkedLabels: labels,
-      allCheckLabel: size === utils.validActions.length ? 'checked' : '',
+      allCheckLabel: size === config.validActions.length ? 'checked' : '',
     };
   });
   pm2.disconnect();
@@ -67,7 +67,7 @@ module.exports = {
       accounts = (await AccountModel
         .find({
           role: {
-            $ne: utils.adminRole,
+            $ne: config.adminRole,
           },
         }))
         .map(({ _id, login, description }) => ({
@@ -93,7 +93,7 @@ module.exports = {
       const appIdsAndNames = apps.map(({ pm_id, name }) => ({
         id: pm_id,
         name,
-        checkedLabels: utils.validActions.reduce((acc, key) => {
+        checkedLabels: config.validActions.reduce((acc, key) => {
           acc[key] = '';
           return acc;
         }, {}),
@@ -122,7 +122,7 @@ module.exports = {
       const userAccount = new AccountModel({
         login,
         password,
-        role: utils.userRole,
+        role: config.userRole,
         description,
         permissions: appIdsAndNames.map(({ id, checkedLabels }) => ({
           instancePm2Id: id,
@@ -162,7 +162,7 @@ module.exports = {
       const { login, description, permissions } = account;
       const permissionsObject = apps
         .reduce((acc, { pm_id }) => {
-          acc[pm_id] = utils.validActions.reduce((accI, action) => {
+          acc[pm_id] = config.validActions.reduce((accI, action) => {
             accI[action] = permissions
               .find(({ instancePm2Id }) => instancePm2Id === Number(pm_id))
               ?.availableActions
@@ -181,7 +181,7 @@ module.exports = {
           id: pm_id,
           name,
           checkedLabels: labels,
-          allCheckLabel: size === utils.validActions.length ? 'checked' : '',
+          allCheckLabel: size === config.validActions.length ? 'checked' : '',
         };
       });
       res.render('addEditAccount', {

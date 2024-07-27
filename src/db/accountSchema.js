@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const uniqueValidator = require('mongoose-unique-validator');
-const utils = require('./utils');
+const config = require('../utils/config');
 
 const accountSchema = mongoose.Schema({
   login: {
@@ -25,9 +25,9 @@ const accountSchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
-    default: utils.userRole,
+    default: config.userRole,
     validate: {
-      validator: roleName => [utils.adminRole, utils.userRole].includes(roleName),
+      validator: roleName => [config.adminRole, config.userRole].includes(roleName),
       msg: 'Role name must be user or admin.',
     },
   },
@@ -49,7 +49,7 @@ const accountSchema = mongoose.Schema({
         validate: [
           {
             validator: actions => {
-              return actions.every(action => utils.validActions.includes(action));
+              return actions.every(action => config.validActions.includes(action));
             },
             msg: props => `${props.value} is invalid action.`,
           },
@@ -97,18 +97,18 @@ accountSchema.methods = {
       .map(({ instancePm2Id }) => instancePm2Id);
   },
   checkAppPermission(apps, appId) {
-    return this.role === utils.adminRole || apps.includes(appId)
+    return this.role === config.adminRole || apps.includes(appId)
   },
   getActionsForApp(pmId) {
     let actionsList = [];
-    if (this.role === utils.adminRole) {
-      actionsList =  utils.validActions.filter(action => action !== 'view');
+    if (this.role === config.adminRole) {
+      actionsList =  config.validActions.filter(action => action !== 'view');
     }
     const permissions = this.permissions.find(({ instancePm2Id }) => pmId === instancePm2Id);
     if (permissions) {
       actionsList = permissions.availableActions;
     }
-    return utils.validActions.reduce((acc, action) => {
+    return config.validActions.reduce((acc, action) => {
       acc[action] = actionsList.includes(action);
       return acc;
     }, {});

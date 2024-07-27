@@ -3,7 +3,7 @@
 const { v4: uuidv4 } = require('uuid');
 const AccountModel = require('../db/accountSchema');
 const logger = require('../utils/logger');
-const utils = require('../db/utils');
+const config = require('../utils/config');
 
 const determinateLogoutReason = (reason) => {
   switch (reason) {
@@ -38,7 +38,7 @@ module.exports = {
         id: _id,
         login: account.login,
         role,
-        socketId: role !== utils.adminRole ? uuidv4() : null,
+        socketId: role !== config.adminRole ? uuidv4() : null,
       };
       res.redirect('/');
     } catch (e) {
