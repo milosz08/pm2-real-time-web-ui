@@ -10,7 +10,7 @@ const { Server } = require('socket.io');
 const { engine } = require('express-handlebars');
 
 const config = require('./utils/config');
-const sessionStore = require('./utils/session');
+const session = require('./utils/session');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 const db = require('./db/config');
@@ -22,14 +22,10 @@ db.connect();
 db.createDefaultAdminAccount();
 
 const io = new Server(httpServer);
-const monitIo = io.of('/monit');
-const consoleIo = io.of('/console');
 const sessionIo = io.of('/session');
 
 module.exports = {
   io,
-  monitIo,
-  consoleIo,
   sessionIo,
 };
 
@@ -45,7 +41,7 @@ app.use(expressSession({
   },
   resave: true,
   rolling: true,
-  store: sessionStore,
+  store: session.sessionStore,
 }));
 
 app.engine('.hbs', engine({ extname: '.hbs' }));
@@ -64,7 +60,7 @@ const apiRouter = require('./router/api');
 app.use('/', webRouter);
 app.use('/api', apiRouter);
 
-require('./socket/handler');
+require('./utils/socketHandler');
 
 process.on('SIGINT', () => db.disconnect('SIGINT'));
 process.on('SIGTERM', () => db.disconnect('SIGTERM'));
