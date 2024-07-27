@@ -18,6 +18,11 @@
         <label for="password" class="form-label">Password:</label>
         <input id="password" type="password" class="form-control" name="password">
       </div>
+      {{#if hCaptchaEnabled}}
+        <div class="d-flex justify-content-center mb-3">
+          <div class="h-captcha" data-sitekey="{{hCaptchaSiteKey}}"></div>
+        </div>
+      {{/if}}
       <button class="btn btn-primary w-100" type="submit">
         Log in
       </button>

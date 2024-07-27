@@ -11,6 +11,8 @@ module.exports = {
     res.locals.isAdmin = req.session.loggedUser?.role === config.adminRole;
     res.locals.dataTick = config.interval;
     res.locals.sessionTime = Date.now() + req.session.cookie.originalMaxAge;
+    res.locals.hCaptchaSiteKey = config.hCaptchaSiteKey;
+    res.locals.hCaptchaEnabled = config.hCaptchaEnabled;
     next();
   },
 };

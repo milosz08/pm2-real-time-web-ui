@@ -26,12 +26,32 @@ module.exports = {
   async doPostLogin(req, res) {
     const { login, password } = req.body;
     try {
+      if (config.hCaptchaEnabled) {
+        await new Promise((resolve, reject) => {
+          fetch('https://hcaptcha.com/siteverify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                secret: config.hCaptchaSecretKey,
+                response: req.body['h-captcha-response'],
+            }),
+          })
+          .then(res => res.json())
+          .then(data => data.success
+            ? resolve(data)
+            : reject(new Error('Unable to validate captcha.'))
+          )
+          .catch(() =>  reject(new Error('Unable to validate captcha.')));
+        });
+      }
       const account = await AccountModel.findOne({ login });
       if (!account) {
-        throw new Error(`Unable to find user based login: ${login}.`);
+        throw new Error('Invalid password and/or login.');
       }
       if (!(await account.compareHash(password))) {
-        throw new Error(`Invalid password for login: ${login}.`);
+        throw new Error('Invalid password and/or login.');
       }
       const { _id, role } = account;
       req.session.loggedUser = {
@@ -42,16 +62,22 @@ module.exports = {
       };
       res.redirect('/');
     } catch (e) {
-      logger.error(`doPostLogin: ${e.message}`);
+      logger.error(`doPostLogin: ${e.message}: user: ${login}`);
       res.render('login', {
         form: req.body,
-        error: 'Invalid login and/or password.',
+        error: e.message,
       });
     }
   },
   doGetLogout(req, res) {
     const { reason } = req.query;
     req.session.loggedUser = null;
-    res.redirect(`/login?reason=${reason}`);
+    let redirectTo = '/login';
+    if (reason) {
+      redirectTo = `/login?reason=${reason}`
+    }
+    req.session.destroy(() => {
+      res.redirect(redirectTo);
+    });
   },
 };

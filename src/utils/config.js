@@ -24,4 +24,7 @@ module.exports = {
   validActions: ['view', 'start', 'reload', 'restart', 'stop'],
   adminRole: 'admin',
   userRole: 'user',
+  hCaptchaEnabled: true,
+  hCaptchaSiteKey: process.env.H_CAPTCHA_SITE_KEY || '20000000-ffff-ffff-ffff-000000000002',
+  hCaptchaSecretKey: process.env.H_CAPTCHA_SECRET_KEY || '0x0000000000000000000000000000000000000000',
 };
