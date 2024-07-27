@@ -19,8 +19,8 @@ const accountSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: [ true, "Password is required." ],
-    minlength: [ 8, "Password must have at least 8 characters." ],
+    required: [ true, 'Password is required.' ],
+    minlength: [ 8, 'Password must have at least 8 characters.' ],
   },
   role: {
     type: String,
@@ -33,7 +33,7 @@ const accountSchema = mongoose.Schema({
   },
   description: {
     type: String,
-    maxlength: [ 1000, "Description must not exceed 1000 characters." ],
+    maxlength: [ 1000, 'Description must not exceed 1000 characters.' ],
     default: '',
   },
   permissions: [

@@ -11,6 +11,10 @@ function onContentLoad() {
   socket.on(`revoke:${revokeKey}`, function () {
     window.location.href = '/logout?reason=remoteHost';
   });
+
+  socket.on('connect_error', function (error) {
+    window.toast.error(error);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', onContentLoad);
