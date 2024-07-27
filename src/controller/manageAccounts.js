@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 const pm2Async = require('../utils/pm2AsyncApi');
 const AccountModel = require('../db/accountSchema');
 const utils = require('../db/utils');
-const sessionStore = require('../utils/session');
+const session = require('../utils/session');
 const { sessionIo } = require('../server');
 
 const ROOT_ALERT = 'accountsRootAlert';
@@ -51,36 +51,12 @@ const getPageSessionAlert = (req) => {
 }
 
 const invalidateSession = async (userId) => {
-  const revokedUser = await new Promise((resolve, reject) => {
-    sessionStore.all((err, session) => {
-      if (err || !session) {
-        reject(new Error('Unable to get current session.'));
-      }
-      const revokingUser = Object
-        .entries(session)
-        .find(([_, value]) => value.loggedUser.id === userId.toString());
-      resolve(revokingUser ? {
-        sid: revokingUser[0],
-        socketId: revokingUser[1]?.loggedUser?.socketId,
-      } : null);
-    });
-  });
-  if (revokedUser) {
-    if (revokedUser.sid) {
-      await new Promise((resolve, reject) => {
-        sessionStore.destroy(revokedUser.sid, (err) => {
-          if (err) {
-            reject(new Error('Unable to get current session.'));
-          }
-          logger.info(`Destroyed session for user SID: ${revokedUser.sid}`)
-          resolve();
-        });
-      });
-    }
-    if (revokedUser.socketId) {
-      sessionIo.emit(`revoke:${revokedUser.socketId}`);
-    }
+  const revokedUser = session.getSessionUser(userId);
+  if (!revokedUser) {
+    return;
   }
+  session.removeUserFromSession(revokedUser.sid);
+  sessionIo.emit(`revoke:${revokedUser.socketId}`);
 };
 
 module.exports = {
