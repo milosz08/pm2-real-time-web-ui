@@ -31,10 +31,8 @@ module.exports = {
       process.exit(-1);
     }
   },
-  disconnect(signal) {
-    logger.info(`Received ${signal}. Shutting down DB gracefully...`);
-    mongoose.disconnect()
-      .then(() => logger.info('Successfully disconnected with DB.'))
-      .catch(e => logger.error(`Unable to disconnect from DB. Cause: ${e.message}.`));
+  async disconnect() {
+    await mongoose.disconnect()
+    logger.info('Successfully disconnected with DB.');
   },
 };

@@ -10,14 +10,6 @@ const commonPm2PromiseCallback = (resolve, reject, err, app, text) => {
 };
 
 module.exports = {
-  async connect() {
-    return await new Promise((resolve, reject) => {
-      pm2.connect(err => err
-        ? reject(new Error('Unable to connect with PM2.'))
-        : resolve()
-      );
-    });
-  },
   async getListOfProcesses() {
     return await new Promise((resolve, reject) => {
       pm2.list((err, apps) => err

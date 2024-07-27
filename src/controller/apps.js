@@ -48,9 +48,7 @@ module.exports = {
       const user = req.session.loggedUser;
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps('view');
-      await pm2Async.connect();
       const apps = await pm2Async.getListOfProcesses();
-      pm2.disconnect();
       pm2Apps = apps
         .filter(({ pm_id }) => account.checkAppPermission(accountApps, pm_id))
         .map(app => (createAppDetailsObject(account, app)));
@@ -75,7 +73,6 @@ module.exports = {
         res.redirect('/');
         return;
       }
-      await pm2Async.connect();
       const app = await pm2Async.getProcessDetails(pmId);
       appDetails = {
         ...createAppDetailsObject(account, app),

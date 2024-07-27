@@ -37,7 +37,6 @@ const parseAppAndActions = async (actions) => {
       allCheckLabel: size === config.validActions.length ? 'checked' : '',
     };
   });
-  pm2.disconnect();
   return appIdsAndNames;
 };
 
@@ -89,7 +88,6 @@ module.exports = {
   async doGetAddAccount(req, res) {
     try {
       const apps = await pm2Async.getListOfProcesses();
-      pm2.disconnect();
       const appIdsAndNames = apps.map(({ pm_id, name }) => ({
         id: pm_id,
         name,
@@ -105,7 +103,6 @@ module.exports = {
         omitPasswordCheckbox: false,
       });
     } catch (e) {
-      pm2.disconnect();
       logger.error(`doGetAddAccount: ${e.message}.`);
       req.session[ROOT_ALERT] = {
         type: 'danger',
@@ -138,7 +135,6 @@ module.exports = {
       };
       res.redirect('/manage-accounts');
     } catch (e) {
-      pm2.disconnect();
       logger.error(`doPostAddAccount: ${e.message}`);
       res.render('addEditAccount', {
         pageType: 'Create',
@@ -158,7 +154,6 @@ module.exports = {
         throw new Error(`Account with ID: ${accountId} not exist.`);
       }
       const apps = await pm2Async.getListOfProcesses();
-      pm2.disconnect();
       const { login, description, permissions } = account;
       const permissionsObject = apps
         .reduce((acc, { pm_id }) => {
@@ -196,7 +191,6 @@ module.exports = {
         disablePasswordField: true,
       });
     } catch (e) {
-      pm2.disconnect();
       logger.error(`doGetEditAccount: ${e.message}.`);
       req.session[ROOT_ALERT] = {
         type: 'danger',
@@ -234,7 +228,6 @@ module.exports = {
       };
       res.redirect('/manage-accounts');
     } catch (e) {
-      pm2.disconnect();
       logger.error(`doPostEditAccount: ${e.message}.`);
       res.render('addEditAccount', {
         pageType: 'Edit',

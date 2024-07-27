@@ -8,12 +8,21 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const { Server } = require('socket.io');
 const { engine } = require('express-handlebars');
+const pm2 = require('pm2');
 
 const config = require('./utils/config');
 const session = require('./utils/session');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 const db = require('./db/config');
+
+pm2.connect(err => {
+  if (err) {
+    logger.error('Unable to connect with PM2.')
+  } else {
+    logger.info('Successfully connected with PM2.')
+  }
+});
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -62,9 +71,16 @@ app.use('/api', apiRouter);
 
 require('./utils/socketHandler');
 
-process.on('SIGINT', () => db.disconnect('SIGINT'));
-process.on('SIGTERM', () => db.disconnect('SIGTERM'));
-process.on('SIGQUIT', () => db.disconnect('SIGQUIT'));
+const onEndProcess = async (signal) => {
+  logger.info(`Received ${signal}. Shutting down DB gracefully...`);
+  pm2.disconnect();
+  await db.disconnect();
+  process.exit(0);
+};
+
+process.on('SIGINT', () => onEndProcess('SIGINT'));
+process.on('SIGTERM', () => onEndProcess('SIGTERM'));
+process.on('SIGQUIT', () => onEndProcess('SIGQUIT'));
 
 httpServer.listen(config.port, () => {
   logger.info(`Server started at port: ${config.port}.`)

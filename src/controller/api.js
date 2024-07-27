@@ -16,7 +16,6 @@ const commonAppManagementProcess = async (
   let message = `App was successfully ${actionText}.`;
   let status = 'success';
   try {
-    await pm2Async.connect();
     const app = await pm2Async.getProcessDetails(pmId);
     if (checkStateCallback(app.pm2_env.status)) {
       throw new Error('Unable to perform action. Impropriety app state.')
@@ -27,8 +26,6 @@ const commonAppManagementProcess = async (
     message = e.message;
     status = 'error';
     logger.error(e.message);
-  } finally {
-    pm2.disconnect();
   }
   res.json({ message, status });
 };
@@ -75,7 +72,6 @@ module.exports = {
     let message = `App was successfully deleted.`;
     let status = 'success';
     try {
-      await pm2Async.connect();
       await pm2Async.deleteApp(pmId);
       await AccountModel.updateMany(
         {},
@@ -92,8 +88,6 @@ module.exports = {
       message = e.message;
       status = 'error';
       logger.error(e.message);
-    } finally {
-      pm2.disconnect();
     }
     res.json({ message, status });
   },

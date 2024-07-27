@@ -49,7 +49,6 @@ const onCloseConnectionByClient = (req, res, intervalId, functionName) => {
   res.on('close', () => {
     logger.info(`${functionName}: Connection closed with client ${user.login}.`);
     clearInterval(intervalId);
-    pm2.disconnect();
     res.end();
   });
 };
@@ -64,10 +63,8 @@ module.exports = {
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps('view');
 
-      await pm2Async.connect();
       const apps = await pm2Async.getListOfProcesses();
       if (apps.length === 0) {
-        pm2.disconnect();
         res.end();
         return;
       }
@@ -79,7 +76,6 @@ module.exports = {
     } catch (e) {
       logger.error(e.message);
       clearInterval(intervalId);
-      pm2.disconnect();
       res.end();
     }
   },
@@ -109,7 +105,6 @@ module.exports = {
     } catch (e) {
       logger.error(e.message);
       clearInterval(intervalId);
-      pm2.disconnect();
       res.end();
     }
   },
