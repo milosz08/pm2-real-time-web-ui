@@ -4,7 +4,6 @@ const { Router } = require('express');
 const apps = require('../controller/apps');
 const auth = require('../controller/auth');
 const manageAccounts = require('../controller/manageAccounts');
-const events = require('../controller/events');
 const middleware= require('../middleware/auth');
 
 const router = Router();
@@ -22,9 +21,5 @@ router.post('/add-account', middleware.userMustBeAdmin, manageAccounts.doPostAdd
 router.get('/edit-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doGetEditAccount);
 router.post('/edit-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doPostEditAccount);
 router.get('/delete-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doGetDeleteAccount);
-
-router.get('/event/all', middleware.checkRightsToEventStream, events.sendMonitAllAppsData);
-router.get('/event/single/:pmId', middleware.checkRightsToEventStream, events.sendMonitSingleAppData);
-router.get('/event/console/:pmId', middleware.checkRightsToEventStream, events.sendConsoleAppData);
 
 module.exports = router;
