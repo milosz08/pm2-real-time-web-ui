@@ -1,13 +1,12 @@
 'use strict';
 
-const pm2 = require('pm2');
 const byteSize = require('byte-size');
 const logger = require('../utils/logger');
 const config = require('../utils/config');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
 const AccountModel = require('../db/accountSchema');
-const utils = require('../db/utils');
+const pm2AsyncApi = require('../utils/pm2AsyncApi');
 
 const formatMessage = (message) => {
   return `data: ${JSON.stringify(message)}\n\n`;
@@ -27,7 +26,7 @@ const onTickAll = async (res, accountApps, user) => {
   try {
     const apps = await pm2Async.getListOfProcesses();
     const monitAppAsMap = apps.reduce((acc, app) => {
-      if (user.role === utils.adminRole || accountApps.includes(app.pm_id)) {
+      if (user.role === config.adminRole || accountApps.includes(app.pm_id)) {
         acc[app.pm_id] = constructAppDetails(app);
       }
       return acc;
