@@ -53,5 +53,19 @@ module.exports = {
       return;
     }
     next();
-  }
+  },
+  async checkRightsToEventStream(req, res, next) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    try {
+      const user = req.session.loggedUser;
+      if (!user) {
+        throw new Error('Not logged user. Unable to start event stream.');
+      }
+    } catch (e) {
+      logger.error(e.message);
+      res.end();
+      return;
+    }
+    next();
+  },
 };

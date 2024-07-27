@@ -22,7 +22,7 @@ function updateChartOnTick(appMonit, chart, pmId) {
   }
   chart.data.labels.push(timeLabel);
   chart.data.datasets[0].data.push(appMonit.cpu);
-  chart.data.datasets[1].data.push(appMonit.memoryRaw);
+  chart.data.datasets[1].data.push(parseFloat(appMonit.memory.split(' ')[0]));
 
   chart.update();
   window.updateLabels(pmId, appMonit);
@@ -39,20 +39,20 @@ function onContentLoad() {
 
   generateInitChartContent(chartInstance);
 
-  const socket = io('/monit', {
-    transports: ['websocket'],
-    query: {
-      id,
-    },
-  });
+  if (!window.EventSource) {
+    window.toast.error('Your browser not support SSE!');
+    return;
+  }
+  const eventSource = new window.EventSource(`/event/single/${id}`);
 
-  socket.on('monit:single', function (appMonit) {
-    updateChartOnTick(appMonit, chartInstance, id);
-  });
+  eventSource.onmessage = function (event) {
+    updateChartOnTick(JSON.parse(event.data), chartInstance, id);
+  };
 
-  socket.on('connect_error', function (error) {
-    window.toast.error(error);
-  });
+  eventSource.onerror = function () {
+    window.toast.error('Error in SSE bus.');
+    eventSource.close();
+  };
 }
 
 document.addEventListener('DOMContentLoaded', onContentLoad);
