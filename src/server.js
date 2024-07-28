@@ -71,16 +71,16 @@ app.use('/api', apiRouter);
 
 require('./utils/socketHandler');
 
-const onEndProcess = async (signal) => {
-  logger.info(`Received ${signal}. Shutting down DB gracefully...`);
+const onEndProcess = async () => {
+  logger.info('Shutting down gracefully...');
   pm2.disconnect();
   await db.disconnect();
   process.exit(0);
 };
 
-process.on('SIGINT', () => onEndProcess('SIGINT'));
-process.on('SIGTERM', () => onEndProcess('SIGTERM'));
-process.on('SIGQUIT', () => onEndProcess('SIGQUIT'));
+process.on('SIGINT', onEndProcess);
+process.on('SIGTERM', onEndProcess);
+process.on('SIGQUIT', onEndProcess);
 
 httpServer.listen(config.port, () => {
   logger.info(`Server started at port: ${config.port}.`)
