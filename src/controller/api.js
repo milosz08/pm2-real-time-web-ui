@@ -106,11 +106,11 @@ module.exports = {
     res.json({ message, status });
   },
   async fetchPartOfLogs(req, res) {
-    const { pmId, page } = req.query;
+    const { pmId, type, offset } = req.query;
     try {
       const bufferLength = config.logsBufferLinesCount;
       const app = await pm2Async.getProcessDetails(pmId);
-      const logLines = await pm2Async.readLogsReverse(pmId, page);
+      const logLines = await pm2Async.readLogsReverse(pmId, type, offset);
       logger.info(`Get ${bufferLength} logs from app: ${app.name}.`);
       res.json(logLines);
     } catch (e) {

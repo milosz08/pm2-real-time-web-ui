@@ -1,6 +1,8 @@
 'use strict';
 
 const pm2 = require('pm2');
+const logger = require('./logger');
+const config = require('./config');
 
 const commonPm2PromiseCallback = (resolve, reject, err, app, text) => {
   if (err) {
@@ -75,13 +77,18 @@ module.exports = {
       );
     });
   },
-  async readLogsReverse(pmId, page) {
-    console.log(pmId, page);
+  async readLogsReverse(pmId, type, offset) {
+    if (!config.logTypes.includes(type)) {
+      logger.error(`Unknown type of logs: ${type}. Valid: ${config.logTypes}`);
+      return [];
+    }
+
+    console.log(pmId, type, offset);
     const logLines = []; // TODO: get logs from log file based page
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 50; i++) {
       const date = new Date().toString();
-      logLines.push(`${i}: ${date} - example fetched logs`);
+      logLines.push(`${i}: ${date} - example fetched logs ${type}`);
     }
 
     return logLines.reverse();

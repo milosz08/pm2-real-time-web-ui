@@ -8,11 +8,7 @@ const dateFormat = require('../utils/dateFormat');
 const AccountModel = require('../db/accountSchema');
 
 const formatMessage = (message) => {
-  let data = message;
-  if (typeof message === 'object') {
-    data = JSON.stringify(message)
-  }
-  return `data: ${data}\n\n`;
+  return `data: ${JSON.stringify(message)}\n\n`;
 };
 
 const constructAppDetails = (app) => ({
@@ -68,7 +64,12 @@ const onCloseConnectionByClient = (req, res, intervalId, functionName) => {
 const startListeningAppLogs = (res, pmId, bus) => {
   bus.on('log:out', log => {
     if (log.process.pm_id === Number(pmId)) {
-      res.write(formatMessage(log.data));
+      res.write(formatMessage({ line: log.data, type: 'out' }));
+    }
+  });
+  bus.on('log:err', log => {
+    if (log.process.pm_id === Number(pmId)) {
+      res.write(formatMessage({ line: log.data, type: 'err' }));
     }
   });
 };

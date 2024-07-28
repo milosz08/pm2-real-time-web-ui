@@ -1,8 +1,7 @@
 'use strict';
 
 let childrenToRemove = window.initLogsRemoveBufferCount;
-let consoleContainer;
-let page = 1;
+let consoleContainer, logsContainer, errContainer;
 
 function commonApiCall(action, pmId, params = {}) {
   const urlParams = new URLSearchParams(
@@ -33,42 +32,68 @@ function onUpdateChildrenToRemove(e) {
   childrenToRemove = Number(e.target.value) || 10;
 }
 
-function onGetRealTimeLogs(line) {
-  const code = createLineElement(line);
-  consoleContainer.prepend(code);
+function onGetRealTimeLogs(data) {
+  const code = createLineElement(data.line);
+  if (data.type === 'err') {
+    errContainer.prepend(code);
+    return;
+  }
+  logsContainer.prepend(code);
+}
+
+function getSelectedLogsContainer() {
+  const stderrContainer = document.getElementById('stderrContainer');
+  let container = logsContainer;
+  if (stderrContainer.classList.contains('active')) {
+    container = errContainer;
+  }
+  return container;
 }
 
 function onFetchPreviousLogs(id) {
-  commonApiCall('logs', id, { page: ++page }).then(data => {
+  const stderrContainer = document.getElementById('stderrContainer');
+  let type = 'out';
+  let offset = logsContainer.children.length;
+  if (stderrContainer.classList.contains('active')) {
+    type = 'err';
+    offset = errContainer.children.length;
+  }
+  commonApiCall('logs', id, { type, offset }).then(data => {
     if (data.status === 'error') {
       window.toast.show(data);
-    } else {
-      for (const logLine of data) {
-        const code = createLineElement(logLine);
-        consoleContainer.append(code);
+      return;
+    }
+    for (const logLine of data) {
+      const code = createLineElement(logLine);
+      let container = logsContainer;
+      if (type === 'err') {
+        container = errContainer;
       }
+      container.append(code);
     }
   });
 }
 
 function onNewestLogsButtonClick() {
-  consoleContainer.scrollTop = 0;
+  const container = getSelectedLogsContainer();
+  container.scrollTop = 0;
 }
 
 function onRemoveFirstLogLines() {
+  const container = getSelectedLogsContainer();
   for (let i = 0; i < childrenToRemove * 2; i++) {
-    if (consoleContainer.lastChild) {
-      consoleContainer.removeChild(consoleContainer.lastChild);
-    } else {
-        break;
+    if (!container.lastChild) {
+      break;
     }
+    container.removeChild(container.lastChild);
   }
 }
 
 function onFlushLogs(id) {
   commonApiCall('flush', id).then(data => {
     if (data.status !== 'error') {
-      consoleContainer.innerHTML = '';
+      logsContainer.innerHTML = '';
+      errContainer.innerHTML = '';
     }
     window.toast.show(data);
   });
@@ -76,6 +101,9 @@ function onFlushLogs(id) {
 
 function onContentLoad() {
   consoleContainer = document.querySelector('[data-console-pm-id]');
+  logsContainer = document.getElementById('stdout-logs');
+  errContainer = document.getElementById('stderr-logs');
+
   const previousLogsBtn = document.getElementById('previousLogsBtn');
   const newestLogsBtn = document.getElementById('newestLogsBtn');
   const removeFirstLogLinesBtn = document.getElementById('removeFirstLogLinesBtn');
@@ -91,7 +119,7 @@ function onContentLoad() {
   const eventSource = new window.EventSource(`/api/event/console/${id}`);
 
   eventSource.onmessage = function (event) {
-    onGetRealTimeLogs(event.data);
+    onGetRealTimeLogs(JSON.parse(event.data));
   };
 
   eventSource.onerror = function () {
