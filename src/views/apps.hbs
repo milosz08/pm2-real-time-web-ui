@@ -1,107 +1,109 @@
 <script src="/js/manage-app.js"></script>
-<div class="row">
-  <div class="col-12">
-    {{> reloadButton}}
-  </div>
-  {{> errorAlert}}
-  {{#unless error}}
-    {{#if isNoApps}}
-      <div class="col-12">
-        <div class="alert alert-warning" role="alert">
-          Not found any PM2 app.
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      {{> reloadButton}}
+    </div>
+    {{> errorAlert}}
+    {{#unless error}}
+      {{#if isNoApps}}
+        <div class="col-12">
+          <div class="alert alert-warning" role="alert">
+            Not found any PM2 app.
+          </div>
         </div>
-      </div>
-    {{else}}
-      <ul>
-        {{#each pm2Apps}}
-          <li
-            id="border-{{pmId}}"
-            class="card mb-3 px-0 container-fluid position-relative {{borderColor}}">
-            <div
-              id="waiting-{{pmId}}"
-              class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
-              <div class="spinner-border" role="status"></div>
-            </div>
-            <div class="row p-3">
-              <div class="col-12 col-md-3">
-                <h5 class="d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined">deployed_code</span>
-                  {{name}} ({{pmId}})
-                </h5>
-                <p class="m-0 d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined fs-5">memory</span>
-                  CPU: <b id="cpu-{{pmId}}">{{cpu}}</b>
-                </p>
-                <p class="m-0 d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined fs-5">memory_alt</span>
-                  Memory: <b id="mem-{{pmId}}">{{memory}}</b>
-                </p>
-                <p class="m-0 d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined fs-5">schedule</span>
-                  Uptime: <b id="uptime-{{pmId}}">{{uptime}}</b>
-                </p>
-                <p class="m-0 d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined fs-5">sprint</span>
-                  Status:
-                  <b id="status-{{pmId}}" class="{{statusColor}}">
-                    {{status}}
-                  </b>
-                </p>
-                <p class="m-0 d-flex align-items-center gap-2">
-                  <span class="material-symbols-outlined fs-5">fingerprint</span>
-                  Process ID: <b id="pid-{{pmId}}">{{pId}}</b>
-                </p>
+      {{else}}
+        <ul>
+          {{#each pm2Apps}}
+            <li
+              id="border-{{pmId}}"
+              class="card mb-3 px-0 container-fluid position-relative {{borderColor}}">
+              <div
+                id="waiting-{{pmId}}"
+                class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
+                <div class="spinner-border" role="status"></div>
               </div>
-              <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
-                <canvas height="70px" data-chart="{{pmId}}"></canvas>
+              <div class="row p-3">
+                <div class="col-12 col-md-3">
+                  <h5 class="d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined">deployed_code</span>
+                    {{name}} ({{pmId}})
+                  </h5>
+                  <p class="m-0 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">memory</span>
+                    CPU: <b id="cpu-{{pmId}}">{{cpu}}</b>
+                  </p>
+                  <p class="m-0 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">memory_alt</span>
+                    Memory: <b id="mem-{{pmId}}">{{memory}}</b>
+                  </p>
+                  <p class="m-0 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">schedule</span>
+                    Uptime: <b id="uptime-{{pmId}}">{{uptime}}</b>
+                  </p>
+                  <p class="m-0 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">sprint</span>
+                    Status:
+                    <b id="status-{{pmId}}" class="{{statusColor}}">
+                      {{status}}
+                    </b>
+                  </p>
+                  <p class="m-0 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-5">fingerprint</span>
+                    Process ID: <b id="pid-{{pmId}}">{{pId}}</b>
+                  </p>
+                </div>
+                <div class="col-12 col-md-7 d-flex justify-content-center align-items-center py-2">
+                  <canvas height="70px" data-chart="{{pmId}}"></canvas>
+                </div>
+                <div class="col-12 col-md-2 d-flex flex-column justify-content-between gap-2">
+                  {{#if enabledActions.start}}
+                  <button
+                    data-on-disabled="{{pmId}}"
+                    onclick="startApp({{pmId}})"
+                    {{#unless isStopped}} disabled {{/unless}}
+                    class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">not_started</span> Start
+                  </button>
+                  {{/if}}
+                  {{#if enabledActions.reload}}
+                  <button
+                    data-on-enabled="{{pmId}}"
+                    onclick="reloadApp({{pmId}})"
+                    {{#if isStopped}} disabled {{/if}}
+                    class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">refresh</span> Reload
+                  </button>
+                  {{/if}}
+                  {{#if enabledActions.restart}}
+                  <button
+                    data-on-enabled="{{pmId}}"
+                    onclick="restartApp({{pmId}})"
+                    {{#if isStopped}} disabled {{/if}}
+                    class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
+                  </button>
+                  {{/if}}
+                  {{#if enabledActions.stop}}
+                  <button
+                    data-on-enabled="{{pmId}}"
+                    onclick="stopApp({{pmId}})"
+                    {{#if isStopped}} disabled {{/if}}
+                    class="btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
+                  </button>
+                  {{/if}}
+                  <a href="/app/{{pmId}}" class="btn btn-sm btn-secondary">
+                    Go to details
+                  </a>
+                </div>
               </div>
-              <div class="col-12 col-md-2 d-flex flex-column justify-content-between gap-2">
-                {{#if enabledActions.start}}
-                <button
-                  data-on-disabled="{{pmId}}"
-                  onclick="startApp({{pmId}})"
-                  {{#unless isStopped}} disabled {{/unless}}
-                  class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
-                  <span class="material-symbols-outlined fs-6">not_started</span> Start
-                </button>
-                {{/if}}
-                {{#if enabledActions.reload}}
-                <button
-                  data-on-enabled="{{pmId}}"
-                  onclick="reloadApp({{pmId}})"
-                  {{#if isStopped}} disabled {{/if}}
-                  class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
-                  <span class="material-symbols-outlined fs-6">refresh</span> Reload
-                </button>
-                {{/if}}
-                {{#if enabledActions.restart}}
-                <button
-                  data-on-enabled="{{pmId}}"
-                  onclick="restartApp({{pmId}})"
-                  {{#if isStopped}} disabled {{/if}}
-                  class="btn btn-sm btn-primary d-flex justify-content-center align-items-center gap-1">
-                  <span class="material-symbols-outlined fs-6">restart_alt</span> Restart
-                </button>
-                {{/if}}
-                {{#if enabledActions.stop}}
-                <button
-                  data-on-enabled="{{pmId}}"
-                  onclick="stopApp({{pmId}})"
-                  {{#if isStopped}} disabled {{/if}}
-                  class="btn btn-sm btn-danger d-flex justify-content-center align-items-center gap-1">
-                  <span class="material-symbols-outlined fs-6">do_not_disturb_on</span> Stop
-                </button>
-                {{/if}}
-                <a href="/app/{{pmId}}" class="btn btn-sm btn-secondary">
-                  Go to details
-                </a>
-              </div>
-            </div>
-          </li>
-        {{/each}}
-      </ul>
-    {{/if}}
-  {{/unless}}
+            </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    {{/unless}}
+  </div>
 </div>
 <script type="text/javascript" src="/js/line-chart-props.js"></script>
 <script type="text/javascript" src="/js/real-time-charts.js"></script>

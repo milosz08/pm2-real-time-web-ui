@@ -1,7 +1,9 @@
 'use strict';
 
 let childrenToRemove = window.initLogsRemoveBufferCount;
-let consoleContainer, logsContainer, errContainer;
+let consoleContainer, logsContainer, errContainer, resizeLogsWindowBtn;
+
+const arrowsArray = ['chevron_left', 'chevron_right'];
 
 function commonApiCall(action, pmId, params = {}) {
   const urlParams = new URLSearchParams(
@@ -89,6 +91,23 @@ function onRemoveFirstLogLines() {
   }
 }
 
+function onResizeConsoleWindow(e) {
+  let classDefinition = 'container';
+  let textContent = 'Expand';
+  if (consoleContainer.classList.contains('container')) {
+    classDefinition = 'container-fluid';
+    textContent = 'Shrink';
+  }
+  const arrows = Array.from(resizeLogsWindowBtn.children);
+  arrowsArray.reverse();
+  for (let i = 0; i < 2; i++) {
+    arrows[i].textContent = arrowsArray[i];
+  }
+  consoleContainer.className = (classDefinition += ' mb-3');
+  const resizeText = document.getElementById('resizeText');
+  resizeText.textContent = `${textContent} window`;
+}
+
 function onFlushLogs(id) {
   commonApiCall('flush', id).then(data => {
     if (data.status !== 'error') {
@@ -103,12 +122,13 @@ function onContentLoad() {
   consoleContainer = document.querySelector('[data-console-pm-id]');
   logsContainer = document.getElementById('stdout-logs');
   errContainer = document.getElementById('stderr-logs');
+  resizeLogsWindowBtn = document.getElementById('resizeLogsWindowBtn');
 
+  const linesToRemoveInput = document.getElementById('linesToRemoveInput');
   const previousLogsBtn = document.getElementById('previousLogsBtn');
   const newestLogsBtn = document.getElementById('newestLogsBtn');
   const removeFirstLogLinesBtn = document.getElementById('removeFirstLogLinesBtn');
   const flushLogsBtn = document.getElementById('flushLogsBtn');
-  const linesToRemoveInput = document.getElementById('linesToRemoveInput');
   
   const id = consoleContainer.dataset.consolePmId;
 
@@ -132,6 +152,7 @@ function onContentLoad() {
     previousLogsBtn.addEventListener('click', function() { onFetchPreviousLogs(id); });
     newestLogsBtn.addEventListener('click', onNewestLogsButtonClick);
     removeFirstLogLinesBtn.addEventListener('click', onRemoveFirstLogLines);
+    resizeLogsWindowBtn.addEventListener('click', onResizeConsoleWindow);
     flushLogsBtn.addEventListener('click', function() { onFlushLogs(id); });
   }
 }
