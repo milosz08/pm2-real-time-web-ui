@@ -57,7 +57,7 @@ app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
 app.set('views', path.resolve(__dirname, 'views'));
 
-app.use('/static', express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, 'public')));
 app.use('/', commonVariables);
 
 app.use('/api', express.json());

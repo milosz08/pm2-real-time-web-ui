@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PM2 Web UI</title>
-  <link rel="icon" type="image/png" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/css/main.css">
   <script type="text/javascript" src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script type="text/javascript" src="https://hcaptcha.com/1/api.js" async defer></script>
-  <script type="text/javascript" src="/static/js/toast.js"></script>
+  <script type="text/javascript" src="/js/toast.js"></script>
   <script type="text/javascript">
     window.dataTick = {{dataTick}};
     window.sessionTime = {{sessionTime}};
@@ -23,10 +23,10 @@
     {{/unless}}
   </script>
   {{#if loggedUser}}
-    <script type="text/javascript" src="/static/js/session-guard.js"></script>
+    <script type="text/javascript" src="/js/session-guard.js"></script>
   {{/if}}
   {{#unless isAdmin}}
-    <script type="text/javascript" src="/static/js/session-revoker.js"></script>
+    <script type="text/javascript" src="/js/session-revoker.js"></script>
   {{/unless}}
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -34,7 +34,7 @@
     <nav class="navbar bg-body-tertiary">
       <div class="container">
         <div class="d-flex align-items-center">
-          <img src="/static/favicon-32x32.png" class="pe-3" width="auto" height="30"/>
+          <img src="/favicon-32x32.png" class="pe-3" width="auto" height="30"/>
           <a class="navbar-brand" href="/">PM2 Web UI</a>
           {{#if isAdmin}}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">

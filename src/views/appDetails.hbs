@@ -1,11 +1,11 @@
-<script src="/static/js/manage-app.js"></script>
-<div class="row" data-pm-id-root="{{pmId}}">
-  <div class="col-12 col-md-6">
+<script src="/js/manage-app.js"></script>
+<div class="row gap-2" data-pm-id-root="{{pmId}}">
+  <div class="col-12 col-md">
     <a href="/" class="btn btn-secondary w-100">
       Return to all apps
     </a>
   </div>
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md">
     {{> reloadButton}}
   </div>
   {{> errorAlert}}
@@ -183,9 +183,9 @@
           </button>
         {{/if}}
       </div>
-      <script type="text/javascript" src="/static/js/line-chart-props.js"></script>
-      <script type="text/javascript" src="/static/js/real-time-chart.js"></script>
-      <script type="text/javascript" src="/static/js/real-time-console.js"></script>
+      <script type="text/javascript" src="/js/line-chart-props.js"></script>
+      <script type="text/javascript" src="/js/real-time-chart.js"></script>
+      <script type="text/javascript" src="/js/real-time-console.js"></script>
     {{/with}}
   {{/unless}}
 </div>
