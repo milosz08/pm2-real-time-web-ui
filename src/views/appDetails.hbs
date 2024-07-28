@@ -140,24 +140,48 @@
       <div class="col-12">
         <h5>Application logs</h5>
       </div>
-      <div class="col-12 col-md-6 mb-2">
-        <button
-          id="previousLogsBtn"
-          class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-          <span class="material-symbols-outlined fs-6">arrow_upward</span> Get previous logs
-        </button>
-      </div>
-      <div class="col-12 col-md-6 mb-2">
-        <button
-          id="newestLogsBtn"
-          class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-          <span class="material-symbols-outlined fs-6">arrow_downward</span> Go to newest logs
-        </button>
+      <div class="col-12">
+        <div class="container-fluid">
+          <div class="row gap-2">
+            <button
+              id="previousLogsBtn"
+              class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md mb-2 gap-1">
+              <span class="material-symbols-outlined fs-6">arrow_upward</span> Get previous logs
+            </button>
+            <button
+              id="newestLogsBtn"
+              class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md mb-2 gap-1">
+              <span class="material-symbols-outlined fs-6">arrow_downward</span> Go to newest logs
+            </button>
+            <button
+              id="removeFirstLogLinesBtn"
+              class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md mb-2 gap-1">
+              <span class="material-symbols-outlined fs-6">delete_forever</span> Remove first lines (ONLY FROM UI)
+            </button>
+            <input
+              type="number"
+              class="form-control col-12 col-md mb-2"
+              id="linesToRemoveInput"
+              value="{{initLogsRemoveBufferCount}}">
+        </div>
       </div>
       <div class="col-12">
         <div
           data-console-pm-id="{{pmId}}"
-          class="card mb-3 p-3 overflow-auto console-container d-flex flex-column-reverse"></div>
+          class="card mb-3 p-3 overflow-auto console-container d-flex flex-column-reverse">
+          {{#each logLines}}
+            <code class="text-nowrap text-white">{{this}}</code>
+          {{/each}}
+        </div>
+      </div>
+      <div class="col-12">
+        {{#if isAdmin}}
+          <button
+            id="flushLogsBtn"
+            class="btn btn-sm btn-danger d-flex align-items-center justify-content-center col-12 col-md mb-2 gap-1">
+            <span class="material-symbols-outlined fs-6">delete_forever</span> Flush logs
+          </button>
+        {{/if}}
       </div>
       <script type="text/javascript" src="/static/js/line-chart-props.js"></script>
       <script type="text/javascript" src="/static/js/real-time-chart.js"></script>

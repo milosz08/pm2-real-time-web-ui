@@ -67,4 +67,23 @@ module.exports = {
       );
     });
   },
+  async flushAppLogs(pmId) {
+    return await new Promise((resolve, reject) => {
+      pm2.flush(pmId, err => err
+        ? reject(new Error('Unable to flush logs.'))
+        : resolve()
+      );
+    });
+  },
+  async readLogsReverse(pmId, page) {
+    console.log(pmId, page);
+    const logLines = []; // TODO: get logs from log file based page
+
+    for (let i = 0; i < 200; i++) {
+      const date = new Date().toString();
+      logLines.push(`${i}: ${date} - example fetched logs`);
+    }
+
+    return logLines.reverse();
+  },
 };

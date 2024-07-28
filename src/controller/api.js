@@ -3,6 +3,7 @@
 const pm2Async = require('../utils/pm2AsyncApi');
 const logger = require('../utils/logger');
 const AccountModel = require('../db/accountSchema');
+const config = require('../utils/config');
 
 const commonAppManagementProcess = async (
   req,
@@ -89,5 +90,35 @@ module.exports = {
       logger.error(e.message);
     }
     res.json({ message, status });
+  },
+  async flushAppLogs(req, res) {
+    const { pmId } = req.query;
+    let message = 'Successfully deleted application logs.';
+    let status = 'success';
+    try {
+      await pm2Async.flushAppLogs(pmId);
+      logger.info(`App ID: ${pmId}, ${message}.`);
+    } catch (e) {
+      message = e.message;
+      status = 'error';
+      logger.error(e.message);
+    }
+    res.json({ message, status });
+  },
+  async fetchPartOfLogs(req, res) {
+    const { pmId, page } = req.query;
+    try {
+      const bufferLength = config.logsBufferLinesCount;
+      const app = await pm2Async.getProcessDetails(pmId);
+      const logLines = await pm2Async.readLogsReverse(pmId, page);
+      logger.info(`Get ${bufferLength} logs from app: ${app.name}.`);
+      res.json(logLines);
+    } catch (e) {
+      logger.error(e.message);
+      res.json({
+        message: e.message,
+        status: 'error',
+      });
+    }
   },
 };

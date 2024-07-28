@@ -73,10 +73,13 @@ module.exports = {
         return;
       }
       const app = await pm2Async.getProcessDetails(pmId);
+      const logLines = await pm2Async.readLogsReverse(pmId, 1);
       appDetails = {
         ...createAppDetailsObject(account, app),
         execPath: app.pm2_env.pm_exec_path,
-      }
+        logLines,
+        initLogsRemoveBufferCount: config.initLogsRemoveBufferCount,
+      };
     } catch (e) {
       error = e.message;
     }

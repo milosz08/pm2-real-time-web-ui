@@ -38,11 +38,15 @@ module.exports = {
       if (!user) {
         throw new Error(`Not logged user. Action: ${action}: ID ${pmId}.`);
       }
-      const action = req.path.substring(1);
+      const originalAction = req.path.substring(1);
+      let action = originalAction;
+      if (action === 'logs') {
+        action = 'view';
+      }
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps(action);
       if (!account.checkAppPermission(accountApps, Number(pmId))) {
-        throw new Error(`Attempt to invoke ${action}: ID ${pmId} with insufficient permissions.`);
+        throw new Error(`Attempt to invoke ${originalAction}: ID ${pmId} with insufficient permissions.`);
       }
     } catch (e) {
       logger.error(e.message);
