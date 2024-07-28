@@ -26,7 +26,7 @@ function selectAll() {
 
   accessContainer.addEventListener('click', function (e) {
     if (e.target.type === 'checkbox' && e.target.id.includes('all')) {
-      const pmId = Number(e.target.id.replace('all-', ''));
+      const pmId = parseInt(e.target.id.replace('all-', ''));
       for (const action of actions) {
         const checkbox = document.getElementById(`${action}-${pmId}`);
         checkbox.checked = e.target.checked;
@@ -35,7 +35,7 @@ function selectAll() {
     }
     if (e.target.type === 'checkbox' && !e.target.id.includes('all')
       && !e.target.id.includes('view')) {
-      const pmId = Number(e.target.id.split('-')[1]);
+      const pmId = parseInt(e.target.id.split('-')[1]);
       const selectAllCheckbox = document.getElementById(`all-${pmId}`);
 
       const isChecked = [];
@@ -47,7 +47,7 @@ function selectAll() {
       return;
     }
     if (e.target.type === 'checkbox' && e.target.id.includes('view')) {
-      const pmId = Number(e.target.id.split('-')[1]);
+      const pmId = parseInt(e.target.id.split('-')[1]);
       if (!e.target.checked) {
         const allActions = actions.filter(action => action !== 'view');
         allActions.push('all');

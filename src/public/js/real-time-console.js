@@ -31,7 +31,7 @@ function createLineElement(line) {
 }
 
 function onUpdateChildrenToRemove(e) {
-  childrenToRemove = Number(e.target.value)
+  childrenToRemove = parseInt(e.target.value)
     || window.initLogsRemoveBufferCount;
 }
 

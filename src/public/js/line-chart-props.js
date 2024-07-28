@@ -15,7 +15,7 @@ window.generateTimeLabels = function() {
   const now = new Date();
   const labels = [];
   for (let i = initBlankElementsCount - 1; i >= 0; i--) {
-    const pastTime = new Date(now.getTime() - i * Number(window.dataTick));
+    const pastTime = new Date(now.getTime() - i * parseInt(window.dataTick));
     const timeLabel = pastTime.toISOString().substring(11, 8);
     labels.push(timeLabel);
   }

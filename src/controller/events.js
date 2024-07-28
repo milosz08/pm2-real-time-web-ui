@@ -45,7 +45,7 @@ const onTickSelected = async (res, pmId) => {
 const checkIfUserHasAccess = async (user, pmId) => {
   const account = await AccountModel.findById(user.id);
   const accountApps = account.getApps('view');
-  if (user.role !== config.adminRole && !accountApps.includes(Number(pmId))) {
+  if (user.role !== config.adminRole && !accountApps.includes(parseInt(pmId))) {
     res.end();
     return;
   }
@@ -63,12 +63,12 @@ const onCloseConnectionByClient = (req, res, intervalId, functionName) => {
 
 const startListeningAppLogs = (res, pmId, bus) => {
   bus.on('log:out', log => {
-    if (log.process.pm_id === Number(pmId)) {
+    if (log.process.pm_id === parseInt(pmId)) {
       res.write(formatMessage({ line: log.data, type: 'out' }));
     }
   });
   bus.on('log:err', log => {
-    if (log.process.pm_id === Number(pmId)) {
+    if (log.process.pm_id === parseInt(pmId)) {
       res.write(formatMessage({ line: log.data, type: 'err' }));
     }
   });
@@ -127,7 +127,7 @@ module.exports = {
       const bus = await pm2Async.launchBus();
       startListeningAppLogs(res, pmId, bus);
       bus.on('process:event', packet => {
-        if (packet.process.pm_id === Number(pmId)) {
+        if (packet.process.pm_id === parseInt(pmId)) {
           startListeningAppLogs(res, pmId, bus);
         }
       });

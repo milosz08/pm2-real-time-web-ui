@@ -11,7 +11,7 @@ function initChartsMap(charts) {
       window.generateLineChartProps(),
     );
     chartsMap.set(
-      Number(chart.dataset.chart),
+      parseInt(chart.dataset.chart),
       chartInstance,
     );
   }

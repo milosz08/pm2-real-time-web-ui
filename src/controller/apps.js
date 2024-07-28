@@ -68,7 +68,7 @@ module.exports = {
       const user = req.session.loggedUser;
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps('view');
-      if (!account.checkAppPermission(accountApps, Number(pmId))) {
+      if (!account.checkAppPermission(accountApps, parseInt(pmId))) {
         res.redirect('/');
         return;
       }

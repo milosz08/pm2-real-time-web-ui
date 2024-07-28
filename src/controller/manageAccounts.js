@@ -158,7 +158,7 @@ module.exports = {
         .reduce((acc, { pm_id }) => {
           acc[pm_id] = config.validActions.reduce((accI, action) => {
             accI[action] = permissions
-              .find(({ instancePm2Id }) => instancePm2Id === Number(pm_id))
+              .find(({ instancePm2Id }) => instancePm2Id === parseInt(pm_id))
               ?.availableActions
               .includes(action) ? 'checked' : '';
             return accI;

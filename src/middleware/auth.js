@@ -45,7 +45,7 @@ module.exports = {
       }
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps(action);
-      if (!account.checkAppPermission(accountApps, Number(pmId))) {
+      if (!account.checkAppPermission(accountApps, parseInt(pmId))) {
         throw new Error(`Attempt to invoke ${originalAction}: ID ${pmId} with insufficient permissions.`);
       }
     } catch (e) {
