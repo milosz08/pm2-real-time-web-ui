@@ -37,11 +37,14 @@ function onUpdateChildrenToRemove(e) {
 
 function onGetRealTimeLogs(data) {
   const code = createLineElement(data.line);
+  let container = logsContainer;
   if (data.type === 'err') {
-    errContainer.prepend(code);
-    return;
+    container = errContainer;
   }
-  logsContainer.prepend(code);
+  container.prepend(code);
+  if (container.children.length > 200) {
+    container.removeChild(container.lastElementChild);
+  }
 }
 
 function getSelectedLogsContainer() {
@@ -130,7 +133,7 @@ function onContentLoad() {
   const newestLogsBtn = document.getElementById('newestLogsBtn');
   const removeFirstLogLinesBtn = document.getElementById('removeFirstLogLinesBtn');
   const flushLogsBtn = document.getElementById('flushLogsBtn');
-  
+
   const id = consoleContainer.dataset.consolePmId;
 
   if (!window.EventSource) {
