@@ -93,7 +93,7 @@ module.exports = {
   },
   async flushAppLogs(req, res) {
     const { pmId } = req.query;
-    let message = 'Successfully deleted application logs.';
+    let message = 'Successfully flushed application logs.';
     let status = 'success';
     try {
       await pm2Async.flushAppLogs(pmId);

@@ -31,7 +31,8 @@ function createLineElement(line) {
 }
 
 function onUpdateChildrenToRemove(e) {
-  childrenToRemove = Number(e.target.value) || 10;
+  childrenToRemove = Number(e.target.value)
+    || window.initLogsRemoveBufferCount;
 }
 
 function onGetRealTimeLogs(data) {
