@@ -1,6 +1,5 @@
 'use strict';
 
-const pm2 = require('pm2');
 const byteSize = require('byte-size');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');

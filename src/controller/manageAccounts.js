@@ -1,6 +1,5 @@
 'use strict';
 
-const pm2 = require('pm2');
 const logger = require('../utils/logger');
 const pm2Async = require('../utils/pm2AsyncApi');
 const AccountModel = require('../db/accountSchema');

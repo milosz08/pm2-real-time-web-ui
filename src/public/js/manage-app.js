@@ -18,27 +18,21 @@ function commonApiCall(action, pmId) {
   const waitingContainer = loadingContainer(pmId);
   waitingContainer.show();
   return new Promise(resolve => {
-    const errorResponse = {
-      message: 'Unexpected error',
-      status: 'error',
-    };
     fetch(`/api/${action}?pmId=${pmId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       },
     })
-      .then(res => {
-        if (!res.ok) {
-          resolve(errorResponse);
-        }
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
         waitingContainer.hide();
         resolve(data);
       })
-      .catch(() =>  resolve(errorResponse));
+      .catch(() =>  resolve({
+        message: 'Unexpected error',
+        status: 'error',
+      }));
   });
 }
 

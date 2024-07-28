@@ -6,7 +6,6 @@ const config = require('../utils/config');
 const pm2Async = require('../utils/pm2AsyncApi');
 const dateFormat = require('../utils/dateFormat');
 const AccountModel = require('../db/accountSchema');
-const pm2AsyncApi = require('../utils/pm2AsyncApi');
 
 const formatMessage = (message) => {
   let data = message;
@@ -124,7 +123,7 @@ module.exports = {
       const user = req.session.loggedUser;
       logger.info(`sendConsoleAppData: Client ${user.login} connected.`);
       await checkIfUserHasAccess(user, pmId);
-      const bus = await pm2AsyncApi.launchBus();
+      const bus = await pm2Async.launchBus();
       startListeningAppLogs(res, pmId, bus);
       bus.on('process:event', packet => {
         if (packet.process.pm_id === Number(pmId)) {

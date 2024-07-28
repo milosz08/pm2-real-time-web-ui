@@ -1,6 +1,5 @@
 'use strict';
 
-const pm2 = require('pm2');
 const pm2Async = require('../utils/pm2AsyncApi');
 const logger = require('../utils/logger');
 const AccountModel = require('../db/accountSchema');
@@ -69,7 +68,7 @@ module.exports = {
   },
   async deleteApp(req, res) {
     const { pmId } = req.query;
-    let message = `App was successfully deleted.`;
+    let message = 'App was successfully deleted.';
     let status = 'success';
     try {
       await pm2Async.deleteApp(pmId);
