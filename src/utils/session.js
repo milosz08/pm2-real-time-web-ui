@@ -44,7 +44,7 @@ module.exports = {
           if (err) {
             reject(new Error('Unable to get current session.'));
           }
-          logger.info(`Destroyed session for user SID: ${sid}`)
+          logger.debug(`Destroyed session for user SID: ${sid}`)
           resolve();
         });
       });

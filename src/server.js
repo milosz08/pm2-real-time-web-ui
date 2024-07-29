@@ -16,13 +16,10 @@ const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 const db = require('./db/config');
 
-pm2.connect(err => {
-  if (err) {
-    logger.error('Unable to connect with PM2.')
-  } else {
-    logger.info('Successfully connected with PM2.')
-  }
-});
+pm2.connect(err => err
+  ? logger.error('Unable to connect with PM2.')
+  : logger.info('Successfully connected with PM2.')
+);
 
 const app = express();
 const httpServer = http.createServer(app);

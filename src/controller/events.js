@@ -55,7 +55,7 @@ const checkIfUserHasAccess = async (user, pmId) => {
 const onCloseConnectionByClient = (req, res, intervalId, functionName) => {
   const user = req.session.loggedUser;
   res.on('close', () => {
-    logger.info(`${functionName}: Connection closed with client ${user.login}.`);
+    logger.debug(`${functionName}: Connection closed with client ${user.login}.`);
     clearInterval(intervalId);
     res.end();
   });
@@ -79,7 +79,7 @@ module.exports = {
     let intervalId;
     try {
       const user = req.session.loggedUser;
-      logger.info(`sendMonitAllAppsData: client ${user.login} connected.`);
+      logger.debug(`sendMonitAllAppsData: client ${user.login} connected.`);
   
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps('view');
@@ -105,7 +105,7 @@ module.exports = {
     let intervalId;
     try {
       const user = req.session.loggedUser;
-      logger.info(`sendMonitSingleAppData: Client ${user.login} connected.`);
+      logger.debug(`sendMonitSingleAppData: Client ${user.login} connected.`);
       await checkIfUserHasAccess(user, pmId);
       intervalId = setInterval(
         async () => await onTickSelected(res, pmId),
@@ -122,7 +122,7 @@ module.exports = {
     const { pmId } = req.params;
     try {
       const user = req.session.loggedUser;
-      logger.info(`sendConsoleAppData: Client ${user.login} connected.`);
+      logger.debug(`sendConsoleAppData: Client ${user.login} connected.`);
       await checkIfUserHasAccess(user, pmId);
       const bus = await pm2Async.launchBus();
       startListeningAppLogs(res, pmId, bus);
@@ -132,7 +132,7 @@ module.exports = {
         }
       });
       res.on('close', () => {
-        logger.info(`sendConsoleAppData: Connection closed with client ${user.login}.`);
+        logger.debug(`sendConsoleAppData: Connection closed with client ${user.login}.`);
         res.end();
       });
     } catch (e) {
