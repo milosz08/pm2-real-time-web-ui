@@ -76,14 +76,13 @@ module.exports = {
       appDetails = {
         ...createAppDetailsObject(account, app),
         execPath: app.pm2_env.pm_exec_path,
-        logLines: await config.logTypes.reduce(async (accPromise, type) => {
+        logsData: await config.logTypes.reduce(async (accPromise, type) => {
           const acc = await accPromise;
           return {
             ...acc,
             [type]: await pm2Async.readLogsReverse(pmId, type, 0),
           };
         }, Promise.resolve({})),
-        initLogsRemoveBufferCount: config.initLogsRemoveBufferCount,
       };
     } catch (e) {
       error = e.message;

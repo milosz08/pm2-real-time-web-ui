@@ -13,7 +13,7 @@ module.exports = {
     res.locals.sessionTime = Date.now() + req.session.cookie.originalMaxAge;
     res.locals.hCaptchaSiteKey = config.hCaptchaSiteKey;
     res.locals.hCaptchaEnabled = config.hCaptchaEnabled;
-    res.locals.initLogsRemoveBufferCount = config.initLogsRemoveBufferCount;
+    res.locals.realTimeLogsBufferLinesCount = config.realTimeLogsBufferLinesCount;
     next();
   },
 };
