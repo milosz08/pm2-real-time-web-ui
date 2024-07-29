@@ -85,6 +85,7 @@ module.exports = {
     });
   },
   async doGetAddAccount(req, res) {
+    const csrfToken = req.csrfToken();
     try {
       const apps = await pm2Async.getListOfProcesses();
       const appIdsAndNames = apps.map(({ pm_id, name }) => ({
@@ -100,6 +101,7 @@ module.exports = {
         apps: appIdsAndNames,
         appsIsEmpty: appIdsAndNames.length === 0,
         omitPasswordCheckbox: false,
+        csrfToken,
       });
     } catch (e) {
       logger.error(`doGetAddAccount: ${e.message}.`);
@@ -147,6 +149,7 @@ module.exports = {
   },
   async doGetEditAccount(req, res) {
     const { accountId } = req.params;
+    const csrfToken = req.csrfToken();
     try {
       const account = await AccountModel.findById(accountId);
       if (!account) {
@@ -188,6 +191,7 @@ module.exports = {
         omitPasswordCheckbox: true,
         omitPasswordLabel: 'checked',
         disablePasswordField: true,
+        csrfToken,
       });
     } catch (e) {
       logger.error(`doGetEditAccount: ${e.message}.`);

@@ -30,4 +30,6 @@ module.exports = {
   logsBufferLinesCount: 100, // size of the buffer for reading consecutive log lines through the stream
   realTimeLogsBufferLinesCount: 1000, // start removing real-time logs one-by-one from the oldest
   logTypes: ['out', 'err'],
+  cookieSecret: process.env.PM2_COOKIE_SECRET || uuidv4(),
+  csrfSecret: process.env.PM2_CSRF_SECRET || uuidv4().replaceAll('-', ''),
 };

@@ -2265,6 +2265,11 @@ text-hex@1.0.x:
   resolved "https://registry.yarnpkg.com/text-hex/-/text-hex-1.0.0.tgz#69dc9c1b17446ee79a92bf5b884bb4b9127506f5"
   integrity sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg==
 
+tiny-csrf@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/tiny-csrf/-/tiny-csrf-1.1.4.tgz#564be7db5b59ec6bb4992f253862673194b01a5d"
+  integrity sha512-tyWj/ihvuPCQ8YGy55O/MnSnO4bZ5s3m+Ju3EXcBCFLz09RYLw/iHgy32wd93nEFhqHgh67MKO9669fHfk3cVg==
+
 to-regex-range@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/to-regex-range/-/to-regex-range-5.0.1.tgz#1648c44aae7c8d988a326018ed72f5b4dd0392e4"

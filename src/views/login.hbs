@@ -12,6 +12,7 @@
   {{/if}}
   <div class="card">
     <form method="post" class="card-body p-4 mb-0">
+          <input name="_csrf" value="{{csrfToken}}" type="hidden"/>
       <div class="mb-3">
         <label for="login" class="form-label">Login:</label>
         <input id="login" type="text" class="form-control" name="login" value="{{form.login}}">

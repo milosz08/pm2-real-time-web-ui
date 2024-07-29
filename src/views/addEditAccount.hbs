@@ -4,6 +4,7 @@
   </div>
   <h3 class="my-3">{{pageType}} account</h3>
   <form class="row gap-y-3" method="post">
+    <input name="_csrf" value="{{csrfToken}}" type="hidden"/>
     <div class="col-12 col-md-6 mb-3">
       <label for="login" class="form-label">Account login</label>
       <input

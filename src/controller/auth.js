@@ -18,9 +18,11 @@ const determinateLogoutReason = (reason) => {
 
 module.exports = {
   doGetLogin(req, res) {
+    const csrfToken = req.csrfToken();
     const { reason } = req.query;
     res.render('login', {
       info: determinateLogoutReason(reason),
+      csrfToken,
     });
   },
   async doPostLogin(req, res) {

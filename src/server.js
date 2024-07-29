@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const { Server } = require('socket.io');
 const { engine } = require('express-handlebars');
 const pm2 = require('pm2');
+const csurf = require('tiny-csrf');
 
 const config = require('./utils/config');
 const session = require('./utils/session');
@@ -36,7 +37,7 @@ module.exports = {
 };
 
 app.use(nocache());
-app.use(cookieParser());
+app.use(cookieParser(config.cookieSecret));
 
 app.use(expressSession({
   secret: config.sessionSecret,
@@ -59,6 +60,8 @@ app.use('/', commonVariables);
 
 app.use('/api', express.json());
 app.use('/', express.urlencoded({ extended: true }));
+
+app.use(csurf(config.csrfSecret));
 
 const webRouter = require('./router/web');
 const apiRouter = require('./router/api');
