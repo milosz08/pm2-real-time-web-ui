@@ -45,7 +45,7 @@ jobs:
 
       - name: Move to /var/www directory
         run: |
-          cp -r mode_modules /var/www/pm2-real-time-web-ui
+          cp -r node_modules /var/www/pm2-real-time-web-ui
           cp -r src /var/www/pm2-real-time-web-ui
 
       - name: Create .env file
