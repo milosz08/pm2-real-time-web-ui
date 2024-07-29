@@ -81,9 +81,15 @@ accountSchema.pre('save', async function (next) {
     );
     next();
   }
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(account.password, salt);
-  account.password = hash;
+  let password;
+  if (config.adminPasswordHashed && account.role === config.adminRole) {
+    password = account.password
+  } else {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(account.password, salt);
+    password = hash;
+  }
+  account.password = password;
   next();
 });
 

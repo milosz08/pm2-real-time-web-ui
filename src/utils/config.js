@@ -21,6 +21,7 @@ module.exports = {
   dbConnection: process.env.PM2_DB_CONNECTION,
   adminLogin: process.env.PM2_ADMIN_LOGIN,
   adminPassword: process.env.PM2_ADMIN_PASSWORD,
+  adminPasswordHashed: process.env.PM2_ADMIN_PASSWORD_HASHED === 'true',
   validActions: ['view', 'start', 'reload', 'restart', 'stop'],
   adminRole: 'admin',
   userRole: 'user',

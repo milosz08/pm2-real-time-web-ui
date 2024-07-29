@@ -60,6 +60,7 @@ PM2_MONGODB_PASSWORD=<MongoDB default root password>
 
 PM2_ADMIN_LOGIN=<default admin account username>
 PM2_ADMIN_PASSWORD=<default admin account password>
+PM2_ADMIN_PASSWORD_HASHED=<true, if PM2_ADMIN_PASSWORD is hashed with BCrypt>
 PM2_DB_CONNECTION=mongodb://<username>:<password>@<host>:<port>/db?authSource=admin
 PM2_H_CAPTCHA_SITE_KEY=<hCaptcha site key, see hCaptcha challenge section>
 PM2_H_CAPTCHA_SECRET_KEY=<hCaptcha secret, see hCaptcha challenge section>
