@@ -127,7 +127,7 @@ module.exports = {
       const bus = await pm2Async.launchBus();
       startListeningAppLogs(res, pmId, bus);
       bus.on('process:event', packet => {
-        if (packet.process.pm_id === parseInt(pmId)) {
+        if (packet.process.pm_id === parseInt(pmId) && packet.event === 'start') {
           startListeningAppLogs(res, pmId, bus);
         }
       });
