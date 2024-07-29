@@ -209,7 +209,7 @@ module.exports = {
     try {
       const account = await AccountModel.findById(accountId);
       if (!account) {
-        throw new Error(`Account with ID: ${accountId} not exist.`);
+        throw new Error(`Account with ID: ${accountId} not exist`);
       }
       appIdsAndNames = await parseAppAndActions(actions);
       account.login = login;
@@ -251,7 +251,7 @@ module.exports = {
     try {
       const account = await AccountModel.findById(accountId);
       if (!account) {
-        throw new Error(`Account with ID: ${accountId} not exist.`);
+        throw new Error(`Account with ID: ${accountId} not exist`);
       }
       await AccountModel.findByIdAndDelete(account._id);
       await invalidateSession(account._id);
@@ -260,6 +260,37 @@ module.exports = {
       type = 'danger';
       message = e.message;
       logger.error(`doGetDeleteAccount: ${e.message}.`);
+    }
+    req.session[ROOT_ALERT] = {
+      type,
+      message,
+    };
+    res.redirect('/manage-accounts');
+  },
+  async doGetDeleteOrphans(req, res) {
+    let type = 'success';
+    let message = '';
+    try {
+      const apps = await pm2Async.getListOfProcesses();
+      const availableProcesIds = apps.map(({ pm_id }) => pm_id);
+      const { modifiedCount } = await AccountModel.updateMany(
+        { role: 'user' },
+        {
+          $pull: {
+            permissions: {
+              instancePm2Id: {
+                $nin: availableProcesIds,
+              },
+            },
+          },
+        },
+      );
+      message = `Successfully deleted orphan processes in ${modifiedCount} accounts.`;
+      logger.info(`doGetDeleteOrphanInstances: ${message}`);
+    } catch (e) {
+      type = 'danger';
+      message = e.message;
+      logger.error(`doGetDeleteOrphanInstances: ${e.message}.`);
     }
     req.session[ROOT_ALERT] = {
       type,

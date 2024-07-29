@@ -71,6 +71,24 @@
           </li>
         {{/each}}
       </ul>
+      <div class="col-12">
+        <hr>
+      </div>
+      <div class="col-12">
+        <div class="fluid-container">
+          <div class="row gap-2">
+            <div class="col-12 col-md-8">
+              Click this button for remove orphan processes. An orphan process is a process that has been deleted other than
+              programmatically (e.g. as a result of the <code>delete</code> command) whose ID is stored in the user's permissions.
+            </div>
+            <div class="col-12 col-md d-flex align-items-center">
+              <a href="/delete-orphans" class="btn btn-danger w-100">
+                Remove orphan processes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     {{/unless}}
   </div>
 </div>

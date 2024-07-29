@@ -21,5 +21,6 @@ router.post('/add-account', middleware.userMustBeAdmin, manageAccounts.doPostAdd
 router.get('/edit-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doGetEditAccount);
 router.post('/edit-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doPostEditAccount);
 router.get('/delete-account/:accountId', middleware.userMustBeAdmin, manageAccounts.doGetDeleteAccount);
+router.get('/delete-orphans', middleware.userMustBeAdmin, manageAccounts.doGetDeleteOrphans);
 
 module.exports = router;
