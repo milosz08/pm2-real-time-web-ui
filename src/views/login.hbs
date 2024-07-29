@@ -1,35 +1,35 @@
 <div class="container">
   <div class="row">
-<div class="fixed-container mt-5 mx-auto">
-  {{> errorAlert}}
-  {{#if info}}
-    <div class="col-12">
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{{info}}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    </div>
-  {{/if}}
-  <div class="card">
-    <form method="post" class="card-body p-4 mb-0">
-          <input name="_csrf" value="{{csrfToken}}" type="hidden"/>
-      <div class="mb-3">
-        <label for="login" class="form-label">Login:</label>
-        <input id="login" type="text" class="form-control" name="login" value="{{form.login}}">
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password:</label>
-        <input id="password" type="password" class="form-control" name="password">
-      </div>
-      {{#if hCaptchaEnabled}}
-        <div class="d-flex justify-content-center mb-3">
-          <div class="h-captcha" data-sitekey="{{hCaptchaSiteKey}}"></div>
+    <div class="fixed-container mt-5 mx-auto">
+      {{> errorAlert}}
+      {{#if info}}
+        <div class="col-12">
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{{info}}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
         </div>
       {{/if}}
-      <button class="btn btn-primary w-100" type="submit">
-        Log in
-      </button>
-    </form>
+      <div class="card">
+        <form method="post" class="card-body p-4 mb-0">
+          <input name="_csrf" value="{{csrfToken}}" type="hidden"/>
+          <div class="mb-3">
+            <label for="login" class="form-label">Login:</label>
+            <input id="login" type="text" class="form-control" name="login" value="{{form.login}}">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input id="password" type="password" class="form-control" name="password">
+          </div>
+          {{#if hCaptchaEnabled}}
+            <div class="d-flex justify-content-center mb-3">
+              <div class="h-captcha" data-sitekey="{{hCaptchaSiteKey}}"></div>
+            </div>
+          {{/if}}
+          <button class="btn btn-primary w-100" type="submit">
+            Log in
+          </button>
+        </form>
       </div>
     </div>
   </div>
