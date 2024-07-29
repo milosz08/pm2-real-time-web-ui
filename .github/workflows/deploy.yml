@@ -1,0 +1,58 @@
+name: Deploy Web UI
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Add yarn
+        run: |
+          npm i -g yarn
+
+      - name: Install dependencies
+        run: |
+          yarn install --frozen-lockfile
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - name: Stop existing process
+        run: |
+          pm2 stop /root/ecosystem.config.js --only ${{ vars.PM2_WEB_UI_NAME }} --silent
+          pm2 save
+
+      - name: Remove previous compilation files
+        run: |
+          rm -rf /var/www/pm2-real-time-web-ui/*
+          rm -rf /var/www/pm2-real-time-web-ui/{*,.[!.]*,..?*} 2> /dev/null
+
+      - name: Move to /var/www directory
+        run: |
+          cp src /var/www/pm2-real-time-web-ui
+
+      - name: Create .env file
+        run: |
+          touch /var/www/pm2-real-time-web-ui/.env
+          echo "${{ secrets.PROD_ENV_FILE }}" > /var/www/pm2-real-time-web-ui/.env
+
+      - name: Init process
+        run: |
+          pm2 start /root/ecosystem.config.js --only ${{ vars.PM2_WEB_UI_NAME }} --silent
+          pm2 save
