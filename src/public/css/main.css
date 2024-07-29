@@ -13,3 +13,13 @@
   min-height: 400px;
   resize: vertical;
 }
+
+.logs-viewer-console-container {
+  height: 70vh;
+  min-height: 70vh;
+}
+
+.logs-viewer-modal {
+  width: 90%;
+  max-width: 90%;
+}

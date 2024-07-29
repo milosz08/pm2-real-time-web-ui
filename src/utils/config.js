@@ -27,7 +27,7 @@ module.exports = {
   hCaptchaEnabled: true,
   hCaptchaSiteKey: process.env.PM2_H_CAPTCHA_SITE_KEY,
   hCaptchaSecretKey: process.env.PM2_H_CAPTCHA_SECRET_KEY,
-  logsBufferLinesCount: 100,
-  realTimeLogsBufferLinesCount: 10,
+  logsBufferLinesCount: 100, // size of the buffer for reading consecutive log lines through the stream
+  realTimeLogsBufferLinesCount: 1000, // start removing real-time logs one-by-one from the oldest
   logTypes: ['out', 'err'],
 };

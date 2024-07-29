@@ -1,9 +1,9 @@
 'use strict';
 
-let childrenToRemove = window.initLogsRemoveBufferCount;
-let consoleContainer, logsContainer, errContainer, resizeLogsWindowBtn;
-
+const realTimeLogsBufferLinesCount = window.realTimeLogsBufferLinesCount;
 const arrowsArray = ['chevron_left', 'chevron_right'];
+
+let logsContainer, errContainer;
 
 function commonApiCall(action, pmId, params = {}) {
   const urlParams = new URLSearchParams(
@@ -30,23 +30,6 @@ function createLineElement(line) {
   return code;
 }
 
-function onUpdateChildrenToRemove(e) {
-  childrenToRemove = parseInt(e.target.value)
-    || window.initLogsRemoveBufferCount;
-}
-
-function onGetRealTimeLogs(data) {
-  const code = createLineElement(data.line);
-  let container = logsContainer;
-  if (data.type === 'err') {
-    container = errContainer;
-  }
-  container.prepend(code);
-  if (container.children.length > 200) {
-    container.removeChild(container.lastElementChild);
-  }
-}
-
 function getSelectedLogsContainer() {
   const stderrContainer = document.getElementById('stderrContainer');
   let container = logsContainer;
@@ -56,94 +39,40 @@ function getSelectedLogsContainer() {
   return container;
 }
 
-function onFetchPreviousLogs(id) {
+function getLogsContainerType() {
   const stderrContainer = document.getElementById('stderrContainer');
   let type = 'out';
-  let offset = logsContainer.children.length;
   if (stderrContainer.classList.contains('active')) {
     type = 'err';
-    offset = errContainer.children.length;
   }
-  commonApiCall('logs', id, { type, offset }).then(data => {
-    if (data.status === 'error') {
-      window.toast.show(data);
-      return;
-    }
-    for (const logLine of data) {
-      const code = createLineElement(logLine);
-      let container = logsContainer;
-      if (type === 'err') {
-        container = errContainer;
-      }
-      container.append(code);
-    }
-  });
-}
-
-function onNewestLogsButtonClick() {
-  const container = getSelectedLogsContainer();
-  container.scrollTop = 0;
-}
-
-function onRemoveFirstLogLines() {
-  const container = getSelectedLogsContainer();
-  for (let i = 0; i < childrenToRemove * 2; i++) {
-    if (!container.lastChild) {
-      break;
-    }
-    container.removeChild(container.lastChild);
-  }
-}
-
-function onResizeConsoleWindow(e) {
-  let classDefinition = 'container';
-  let textContent = 'Expand';
-  if (consoleContainer.classList.contains('container')) {
-    classDefinition = 'container-fluid';
-    textContent = 'Shrink';
-  }
-  const arrows = Array.from(resizeLogsWindowBtn.children);
-  arrowsArray.reverse();
-  for (let i = 0; i < 2; i++) {
-    arrows[i].textContent = arrowsArray[i];
-  }
-  consoleContainer.className = (classDefinition += ' mb-3');
-  const resizeText = document.getElementById('resizeText');
-  resizeText.textContent = `${textContent} window`;
-}
-
-function onFlushLogs(id) {
-  commonApiCall('flush', id).then(data => {
-    if (data.status !== 'error') {
-      logsContainer.innerHTML = '';
-      errContainer.innerHTML = '';
-    }
-    window.toast.show(data);
-  });
+  return type;
 }
 
 function onContentLoad() {
-  consoleContainer = document.querySelector('[data-console-pm-id]');
-  logsContainer = document.getElementById('stdout-logs');
-  errContainer = document.getElementById('stderr-logs');
-  resizeLogsWindowBtn = document.getElementById('resizeLogsWindowBtn');
-
-  const linesToRemoveInput = document.getElementById('linesToRemoveInput');
-  const previousLogsBtn = document.getElementById('previousLogsBtn');
-  const newestLogsBtn = document.getElementById('newestLogsBtn');
-  const removeFirstLogLinesBtn = document.getElementById('removeFirstLogLinesBtn');
-  const flushLogsBtn = document.getElementById('flushLogsBtn');
-
-  const id = consoleContainer.dataset.consolePmId;
-
   if (!window.EventSource) {
     window.toast.error('Your browser not support SSE!');
     return;
   }
+  const consoleContainer = document.querySelector('[data-console-pm-id]');
+  const id = consoleContainer.dataset.consolePmId;
+
+  logsContainer = document.getElementById('stdout-logs');
+  errContainer = document.getElementById('stderr-logs');
+
+  // real time event source logs
   const eventSource = new window.EventSource(`/api/event/console/${id}`);
 
   eventSource.onmessage = function (event) {
-    onGetRealTimeLogs(JSON.parse(event.data));
+    const data = JSON.parse(event.data);
+    const code = createLineElement(data.line);
+    let container = logsContainer;
+    if (data.type === 'err') {
+      container = errContainer;
+    }
+    container.prepend(code);
+    if (container.children.length > realTimeLogsBufferLinesCount) {
+      container.removeChild(container.lastElementChild);
+    }
   };
 
   eventSource.onerror = function () {
@@ -151,14 +80,107 @@ function onContentLoad() {
     eventSource.close();
   };
 
-  if (consoleContainer) {
-    linesToRemoveInput.addEventListener('change', onUpdateChildrenToRemove);
-    previousLogsBtn.addEventListener('click', function() { onFetchPreviousLogs(id); });
-    newestLogsBtn.addEventListener('click', onNewestLogsButtonClick);
-    removeFirstLogLinesBtn.addEventListener('click', onRemoveFirstLogLines);
-    resizeLogsWindowBtn.addEventListener('click', onResizeConsoleWindow);
-    flushLogsBtn.addEventListener('click', function() { onFlushLogs(id); });
-  }
+  // real time logs console
+  const clearConsoleUiBtn = document.getElementById('clearConsoleUiBtn');
+  const resizeLogsWindowBtn = document.getElementById('resizeLogsWindowBtn');
+  const newestLogsBtn = document.getElementById('newestLogsBtn');
+  const flushLogsBtn = document.getElementById('flushLogsBtn');
+
+  clearConsoleUiBtn.addEventListener('click', function () {
+    const container = getSelectedLogsContainer();
+    container.innerHTML = '';
+  });
+
+  resizeLogsWindowBtn.addEventListener('click', function () {
+    let classDefinition = 'container';
+    let textContent = 'Expand';
+    if (consoleContainer.classList.contains('container')) {
+      classDefinition = 'container-fluid';
+      textContent = 'Shrink';
+    }
+    const arrows = Array.from(resizeLogsWindowBtn.children);
+    arrowsArray.reverse();
+    for (let i = 0; i < 2; i++) {
+      arrows[i].textContent = arrowsArray[i];
+    }
+    consoleContainer.className = (classDefinition += ' mb-3');
+    const resizeText = document.getElementById('resizeText');
+    resizeText.textContent = `${textContent} window`;  
+  });
+
+  newestLogsBtn.addEventListener('click', function () {
+    const container = getSelectedLogsContainer();
+    container.scrollTop = 0;
+  });
+
+  flushLogsBtn.addEventListener('click', function() {
+    commonApiCall('flush', id).then(data => {
+      if (data.status !== 'error') {
+        logsContainer.innerHTML = '';
+        errContainer.innerHTML = '';
+      }
+      window.toast.show(data);
+    });
+  });
+
+  // logs viewer modal
+  const logsViewerContainer = document.getElementById('logsViewerContainer');
+  const logsViewerModalLabel = document.getElementById('logsViewerModalLabel');
+  const previousLogsBtn = document.getElementById('previousLogsBtn');
+  const newestViewerLogsBtn = document.getElementById('newestViewerLogsBtn');
+  const logsViewerModal = document.getElementById('logsViewerModal');
+  const removePreviousRowsCheckbox = document.getElementById('removePreviousRowsCheckbox');
+
+  let removePreviousLogs = removePreviousRowsCheckbox.checked;
+
+  previousLogsBtn.addEventListener('click', function () {
+    const stderrContainer = document.getElementById('stderrContainer');
+    let type = 'out';
+    if (stderrContainer.classList.contains('active')) {
+      type = 'err';
+    }
+    const nextByte = logsViewerContainer.dataset.nextByte;
+    if (nextByte !== '' && parseInt(nextByte) <= 0) {
+      return;
+    }
+    commonApiCall('logs', id, {
+      type,
+      nextByte: nextByte ? nextByte : -1,
+    }).then(data => {
+      if (data.status === 'error') {
+        window.toast.show(data);
+        return;
+      }
+      if (removePreviousLogs) {
+        logsViewerContainer.innerHTML = '';
+      }
+      for (const logLine of data.logLines) {
+        const code = createLineElement(logLine);
+        logsViewerContainer.append(code);
+      }
+      logsViewerContainer.dataset.nextByte = data.nextByte;
+      logsViewerContainer.scrollTo(0, -logsViewerContainer.scrollHeight);
+    });
+  });
+
+  newestViewerLogsBtn.addEventListener('click', function () {
+    logsViewerContainer.scrollTop = 0;
+  });
+
+  removePreviousRowsCheckbox.addEventListener('change', function () {
+    removePreviousLogs = !removePreviousLogs;
+  });
+
+  logsViewerModal.addEventListener('show.bs.modal', function () {
+    const type = getLogsContainerType();
+    logsViewerModalLabel.textContent = `Logs viewer (${type.toUpperCase()})`;
+  });
+
+  logsViewerModal.addEventListener('hide.bs.modal', function () {
+    logsViewerContainer.innerHTML = '';
+    logsViewerContainer.dataset.nextByte = '';
+    logsViewerModalLabel.textContent = 'Logs viewer';
+  });
 }
 
 document.addEventListener('DOMContentLoaded', onContentLoad);

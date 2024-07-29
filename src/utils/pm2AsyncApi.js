@@ -1,6 +1,7 @@
 'use strict';
 
 const pm2 = require('pm2');
+const fs = require('fs');
 const logger = require('./logger');
 const config = require('./config');
 
@@ -77,20 +78,43 @@ module.exports = {
       );
     });
   },
-  async readLogsReverse(pmId, type, offset) {
+  async readLogsReverse(pmId, type, nextByte) {
     if (!config.logTypes.includes(type)) {
       logger.error(`Unknown type of logs: ${type}. Valid: ${config.logTypes}`);
       return [];
     }
-
-    console.log(pmId, type, offset);
-    const logLines = []; // TODO: get logs from log file based page
-
-    for (let i = 0; i < 50; i++) {
-      const date = new Date().toString();
-      logLines.push(`${i}: ${date} - example fetched logs ${type}`);
+    const app = await this.getProcessDetails(pmId);
+    let logPath = app.pm2_env.pm_out_log_path;
+    if (type === 'err') {
+      logPath = app.pm2_env.pm_err_log_path;
     }
-
-    return logLines.reverse();
+    const fileSize = await new Promise(resolve => {
+      fs.stat(logPath, (err, stats) => err
+        ? resolve(-1)
+        : resolve(stats.size))
+    });
+    return await new Promise(resolve => {
+      const next = parseInt(nextByte);
+      const end = next && next >= 0 ? next : fileSize;
+      const dataSize = config.logsBufferLinesCount * 200;
+      let data = '';
+      const logFile = fs.createReadStream(logPath, {
+        start: Math.max(0, end - dataSize),
+        end,
+      });
+      logFile.on('data', chunk => {
+        data += chunk.toString();
+      });
+      logFile.on('end', () => {
+        data = data.split('\n');
+        data = data.slice(-(config.logsBufferLinesCount + 1));
+        const sentDateSize = Buffer.byteLength(data.join('\n'), 'utf-8');
+        data.pop();
+        resolve({
+          logLines: data.reverse(),
+          nextByte: (end - sentDateSize),
+        });
+      });
+    });
   },
 };

@@ -142,12 +142,60 @@
           <h5>Application logs</h5>
         </div>
         <div class="col-12 mb-3">
+          <div class="modal fade" id="logsViewerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog logs-viewer-modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="logsViewerModalLabel">Logs viewer</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="container-fluid">
+                    <div class="row gap-2">
+                      <div class="col-12">
+                        <div class="container-fluid">
+                          <div class="row gap-2">
+                            <button
+                              id="previousLogsBtn"
+                              class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1 w-100">
+                              <span class="material-symbols-outlined fs-6">arrow_upward</span> Get previous logs
+                            </button>
+                            <button
+                              id="newestViewerLogsBtn"
+                              class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1 w-100">
+                              <span class="material-symbols-outlined fs-6">arrow_downward</span> Go to newest logs
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="removePreviousRowsCheckbox" checked>
+                          <label class="form-check-label" for="removePreviousRowsCheckbox">
+                            Remove previous rows after get new logs chunk
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div
+                          id="logsViewerContainer"
+                          class="card p-2 console-container logs-viewer-console-container overflow-auto d-flex flex-column-reverse"
+                          data-next-byte="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="container-fluid">
             <div class="row gap-2">
               <button
-                id="previousLogsBtn"
-                class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1">
-                <span class="material-symbols-outlined fs-6">arrow_upward</span> Get previous logs
+                class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1"
+                data-bs-toggle="modal"
+                data-bs-target="#logsViewerModal">
+                <span class="material-symbols-outlined fs-6">search</span> Logs viewer
               </button>
               <button
                 id="newestLogsBtn"
@@ -155,15 +203,25 @@
                 <span class="material-symbols-outlined fs-6">arrow_downward</span> Go to newest logs
               </button>
               <button
-                id="removeFirstLogLinesBtn"
-                class="btn btn-sm btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1">
-                <span class="material-symbols-outlined fs-6">delete_forever</span> Remove first lines (ONLY FROM UI)
+                id="resizeLogsWindowBtn"
+                class="btn btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1">
+                <span class="material-symbols-outlined fs-6">chevron_left</span>
+                <span class="material-symbols-outlined fs-6">chevron_right</span>
+                <span id="resizeText">Expand window</span>
               </button>
-              <input
-                type="number"
-                class="form-control col-12 col-md"
-                id="linesToRemoveInput"
-                value="{{initLogsRemoveBufferCount}}">
+              <button
+                id="clearConsoleUiBtn"
+                class="btn btn-sm btn-danger d-flex align-items-center justify-content-center col-12 col-md gap-1">
+                <span class="material-symbols-outlined fs-6">delete_forever</span> Clear console (only on UI)
+              </button>
+              {{#if isAdmin}}
+                <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#flushLogsModal"
+                  class="btn btn-danger d-flex align-items-center justify-content-center col-12 col-md gap-1">
+                  <span class="material-symbols-outlined fs-6">delete_forever</span> Flush logs (OUT and ERR)
+                </button>
+              {{/if}}
             </div>
           </div>
         </div>
@@ -194,30 +252,6 @@
 </div>
 {{#unless error}}
   {{#with appDetails}}
-    <div class="container mb-3" data-console-pm-id="{{pmId}}">
-      {{#with logLines}}
-        <div class="tab-content">
-          <div class="tab-pane active" id="stdout" tabindex="0">
-            <div id="stdout-logs" class="card p-2 console-container overflow-auto d-flex flex-column-reverse ">
-              {{#each out}}
-                <code class="text-nowrap text-white">
-                  {{this}}
-                </code>
-              {{/each}}
-            </div>
-          </div>
-          <div class="tab-pane" id="stderr" tabindex="0">
-            <div id="stderr-logs" class="card p-2 console-container overflow-auto d-flex flex-column-reverse">
-              {{#each err}}
-                <code class="text-nowrap text-white">
-                  {{this}}
-                </code>
-              {{/each}}
-            </div>
-          </div>
-        </div>
-      {{/with}}
-    </div>
     <div class="modal fade" id="flushLogsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -242,30 +276,35 @@
         </div>
       </div>
     </div>
-    <div class="container">
-      <div class="row gap">
-        <div class="col-12">
-          <div class="container-fluid">
-            <div class="row gap-2">
-              <button
-              id="resizeLogsWindowBtn"
-              class="btn btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1">
-              <span class="material-symbols-outlined fs-6">chevron_left</span>
-              <span class="material-symbols-outlined fs-6">chevron_right</span>
-              <span id="resizeText">Expand window</span>
-            </button>
-              {{#if isAdmin}}
-                <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#flushLogsModal"
-                  class="btn btn-danger d-flex align-items-center justify-content-center col-12 col-md gap-1">
-                  <span class="material-symbols-outlined fs-6">delete_forever</span> Flush logs (OUT and ERR)
-                </button>
-              {{/if}}
+    <div class="container mb-3" data-console-pm-id="{{pmId}}">
+      {{#with logsData}}
+        <div class="tab-content">
+          <div class="tab-pane active" id="stdout" tabindex="0">
+            <div
+              id="stdout-logs"
+              class="card p-2 console-container overflow-auto d-flex flex-column-reverse"
+              data-next-byte="{{out.nextByte}}">
+              {{#each out.logLines}}
+                <code class="text-nowrap text-white">
+                  {{this}}
+                </code>
+              {{/each}}
+            </div>
+          </div>
+          <div class="tab-pane" id="stderr" tabindex="0">
+            <div
+              id="stderr-logs"
+              class="card p-2 console-container overflow-auto d-flex flex-column-reverse"
+              data-next-byte="{{err.nextByte}}">
+              {{#each err.logLines}}
+                <code class="text-nowrap text-white">
+                  {{this}}
+                </code>
+              {{/each}}
             </div>
           </div>
         </div>
-      </div>
+      {{/with}}
     </div>
   {{/with}}
 {{/unless}}
