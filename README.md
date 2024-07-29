@@ -9,7 +9,6 @@ An interactive and open-source management panel for PM2 instances updated in rea
 - [Prerequisites](#prerequisites)
 - [Clone and install](#clone-and-install)
 - [hCaptcha challenge](#h-captcha-challenge)
-- [Reverse proxy with NGINX](#reverse-proxy-with-nginx)
 - [Disclaimer](#disclaimer)
 - [Tech stack](#tech-stack)
 - [Author](#author)
