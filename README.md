@@ -95,7 +95,7 @@ PM2_H_CAPTCHA_SECRET_KEY=0x0000000000000000000000000000000000000000
 ```
 for more information, see [this section](https://docs.hcaptcha.com/#test-key-set-publisher-or-pro-account).
 
-To configure hCaptcha for production environment, register new app in hCaptcha dashboard, get **site-key** and **secret-key** for your account (more information about that process you will find [here](https://docs.hcaptcha.com)).
+To configure hCaptcha for production environment, register new app in hCaptcha dashboard and get **site-key** with **secret-key** (more information about that process you will find [here](https://docs.hcaptcha.com)).
 
 After than, provide two environment variables:
 ```properties
