@@ -99,8 +99,8 @@ To configure hCaptcha for production environment, register new app in hCaptcha d
 
 After than, provide two environment variables:
 ```properties
-PM2_H_CAPTCHA_SITE_KEY=<hCaptcha site key, see hCaptcha section>
-PM2_H_CAPTCHA_SECRET_KEY=<hCaptcha secret, see hCaptcha section>
+PM2_H_CAPTCHA_SITE_KEY=<hCaptcha site key>
+PM2_H_CAPTCHA_SECRET_KEY=<hCaptcha secret>
 ```
 
 and make sure that `hCaptchaEnabled` variables is set to true (in `utils/config.js` file):
