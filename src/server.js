@@ -42,6 +42,7 @@ app.use(cookieParser(config.cookieSecret));
 app.use(expressSession({
   secret: config.cookieSecret,
   saveUninitialized: true,
+  proxy: config.isProd,
   cookie: {
     maxAge: config.sessionMaxLife * 1000,
     secure: config.isProd,
