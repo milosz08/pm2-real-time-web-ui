@@ -16,7 +16,6 @@ module.exports = {
   port: options.port,
   interval: options.interval,
   sessionMaxLife: options.sesTime,
-  sessionSecret: process.env.PM2_SECRET_KEY || uuidv4(),
   isProd: process.env.NODE_ENV === 'production',
   dbConnection: process.env.PM2_DB_CONNECTION,
   adminLogin: process.env.PM2_ADMIN_LOGIN,
@@ -28,8 +27,8 @@ module.exports = {
   hCaptchaEnabled: true,
   hCaptchaSiteKey: process.env.PM2_H_CAPTCHA_SITE_KEY,
   hCaptchaSecretKey: process.env.PM2_H_CAPTCHA_SECRET_KEY,
-  logsBufferLinesCount: 100, // size of the buffer for reading consecutive log lines through the stream
-  realTimeLogsBufferLinesCount: 1000, // start removing real-time logs one-by-one from the oldest
+  logsBufferLinesCount: 100,
+  realTimeLogsBufferLinesCount: 1000,
   logTypes: ['out', 'err'],
   cookieSecret: process.env.PM2_COOKIE_SECRET || uuidv4(),
   csrfSecret: process.env.PM2_CSRF_SECRET || uuidv4().replaceAll('-', ''),

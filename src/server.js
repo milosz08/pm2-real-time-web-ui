@@ -40,7 +40,7 @@ app.use(nocache());
 app.use(cookieParser(config.cookieSecret));
 
 app.use(expressSession({
-  secret: config.sessionSecret,
+  secret: config.cookieSecret,
   saveUninitialized: true,
   cookie: {
     maxAge: config.sessionMaxLife * 1000,

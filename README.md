@@ -27,6 +27,7 @@ An interactive and open-source management panel for PM2 instances updated in rea
 - [x] create additional user accounts with different permissions for running processes (view, start, restart etc.),
 - [x] automatic logs rotation in UI (keeping recent 1000 lines to prevent high memory usage),
 - [x] hCaptcha challenge in login form for prevent spam,
+- [x] simultaneous logout of the user after editing his account by the administrator,
 - [ ] handling multiple PM2 instances from different servers,
 - [ ] availability to start non-existing process.
 
@@ -87,6 +88,19 @@ $ pm2 start src/server.js --name Pm2RealTimeUi
 $ pm2 save
 ```
 
+Optionally, you can pass additional parameters:
+* `--port` - application port, (by default 3000),
+* `--interval` - data refreshing interval (CPU and memory usage) in milliseconds (by default 1000),
+* `--sesTime` - session max time in seconds (by default 7200s -> 2h).
+
+Rest of application config you can find in `utils/config.js` file. The most significant fields, what you might be change is:
+
+```js
+logsBufferLinesCount: 100, // size of the buffer for reading consecutive log lines through the stream
+realTimeLogsBufferLinesCount: 1000, // max count of records in real-time console log dump
+```
+
+
 <a name="h-captcha-challenge"></a>
 ## hCaptcha challenge
 By default in development environment, hCaptcha is active but without any challenge. This is provided by the following keys:
@@ -104,7 +118,7 @@ PM2_H_CAPTCHA_SITE_KEY=<hCaptcha site key>
 PM2_H_CAPTCHA_SECRET_KEY=<hCaptcha secret>
 ```
 
-and make sure that `hCaptchaEnabled` variables is set to true (in `utils/config.js` file):
+and make sure that `hCaptchaEnabled` variable is set to true (in `utils/config.js` file):
 ```js
 ...
 hCaptchaEnabled: true, // this must be true
