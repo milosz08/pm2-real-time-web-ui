@@ -81,7 +81,7 @@ module.exports = {
   async readLogsReverse(pmId, type, nextByte) {
     if (!config.logTypes.includes(type)) {
       logger.error(`Unknown type of logs: ${type}. Valid: ${config.logTypes}`);
-      return [];
+      return { logLines: [], nextByte: -1 };
     }
     const app = await this.getProcessDetails(pmId);
     let logPath = app.pm2_env.pm_out_log_path;
@@ -89,10 +89,13 @@ module.exports = {
       logPath = app.pm2_env.pm_err_log_path;
     }
     const fileSize = await new Promise(resolve => {
-      fs.stat(logPath, (err, stats) => err
-        ? resolve(-1)
-        : resolve(stats.size))
+      fs.stat(logPath, (err, stats) => (
+        resolve(err ? -1 : stats.size)
+      ));
     });
+    if (fileSize === -1) {
+      return { logLines: [], nextByte: -1 };
+    }
     return await new Promise(resolve => {
       const next = parseInt(nextByte);
       const end = next && next >= 0 ? next : fileSize;
