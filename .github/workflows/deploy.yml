@@ -6,54 +6,88 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [20.x]
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
 
-      - name: Add yarn
-        run: |
-          npm i -g yarn
+      - name: Install Yarn
+        run: npm i -g yarn
 
       - name: Install dependencies
-        run: |
-          yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
+
+      - name: Upload generated dist files
+        uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: |
+            node_modules
+            src
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build
+    env:
+      PM2_WEB_UI_NAME: "PM2WebUI"
+      SERVER_OUTPUT: "/var/www/pm2-real-time-web-ui"
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
     steps:
+      - name: Download generated dist files
+        uses: actions/download-artifact@v4
+        with:
+          name: output
+          path: dist
+
       - name: Stop existing process
-        run: |
-          pm2 stop /root/ecosystem.config.js --only ${{ vars.PM2_WEB_UI_NAME }} --silent
-          pm2 save
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          passphrase: ${{ env.SSH_PASSPHRASE }}
+          script: ~/exec/process stop ${{ env.PM2_WEB_UI_NAME }}
 
-      - name: Remove previous compilation files
-        run: |
-          rm -rf /var/www/pm2-real-time-web-ui/*
-          rm -rf /var/www/pm2-real-time-web-ui/{*,.[!.]*,..?*} 2> /dev/null
+      - name: Move files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          passphrase: ${{ env.SSH_PASSPHRASE }}
+          source: "dist/node_modules/*,dist/src"
+          target: ${{ env.SERVER_OUTPUT }}
+          rm: true
 
-      - name: Move to /var/www directory
-        run: |
-          cp -r node_modules /var/www/pm2-real-time-web-ui
-          cp -r src /var/www/pm2-real-time-web-ui
+      - name: Re-create config file
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          passphrase: ${{ env.SSH_PASSPHRASE }}
+          script: ~/exec/make-conf ${{ env.SERVER_OUTPUT }} "${{ secrets.CONFIG_FILE_CONTENT }}"
 
-      - name: Create .env file
-        run: |
-          touch /var/www/pm2-real-time-web-ui/.env
-          echo "${{ secrets.PROD_ENV_FILE }}" > /var/www/pm2-real-time-web-ui/.env
-
-      - name: Init process
-        run: |
-          pm2 start /root/ecosystem.config.js --only ${{ vars.PM2_WEB_UI_NAME }} --silent
-          pm2 save
+      - name: Start process
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          passphrase: ${{ env.SSH_PASSPHRASE }}
+          script: ~/exec/process start ${{ env.PM2_WEB_UI_NAME }}
