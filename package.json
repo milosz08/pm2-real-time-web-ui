@@ -16,7 +16,7 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "byte-size": "^9.0.0",
     "command-line-args": "^6.0.1",
     "cookie-parser": "^1.4.7",
