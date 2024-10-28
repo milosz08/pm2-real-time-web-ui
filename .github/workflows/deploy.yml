@@ -71,6 +71,7 @@ jobs:
           source: "dist/node_modules/*,dist/src"
           target: ${{ env.SERVER_OUTPUT }}
           rm: true
+          strip_components: 1
 
       - name: Re-create config file
         uses: appleboy/ssh-action@v1.1.0

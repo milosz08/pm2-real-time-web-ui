@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   pm2-web-ui-mongodb:
     container_name: pm2-web-ui-mongodb
