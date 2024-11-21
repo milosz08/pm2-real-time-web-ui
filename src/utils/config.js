@@ -15,6 +15,7 @@ const options = commandLineArgs([
 module.exports = {
   port: options.port,
   interval: options.interval,
+  ssePingInterval: 15_000,
   sessionMaxLife: options.sesTime,
   isProd: process.env.NODE_ENV === 'production',
   dbConnection: process.env.PM2_DB_CONNECTION,

@@ -86,13 +86,16 @@ module.exports = {
 
       const apps = await pm2Async.getListOfProcesses();
       if (apps.length === 0) {
-        res.end();
-        return;
+        intervalId = setInterval(
+          () => res.write(': ping\n\n'),
+          config.ssePingInterval,
+        );
+      } else {
+        intervalId = setInterval(
+          async () => await onTickAll(res, accountApps, user),
+          config.interval,
+        );
       }
-      intervalId = setInterval(
-        async () => await onTickAll(res, accountApps, user),
-        config.interval,
-      );
       onCloseConnectionByClient(req, res, intervalId, 'sendMonitAllAppsData');
     } catch (e) {
       logger.error(e.message);
@@ -120,6 +123,7 @@ module.exports = {
   },
   async sendConsoleAppData(req, res) {
     const { pmId } = req.params;
+    let intervalId;
     try {
       const user = req.session.loggedUser;
       logger.debug(`sendConsoleAppData: Client ${user.login} connected.`);
@@ -131,12 +135,17 @@ module.exports = {
           startListeningAppLogs(res, pmId, bus);
         }
       });
+      intervalId = setInterval(
+        () => res.write(': ping\n\n'),
+        config.ssePingInterval,
+      );
       res.on('close', () => {
         logger.debug(`sendConsoleAppData: Connection closed with client ${user.login}.`);
         res.end();
       });
     } catch (e) {
       logger.error(e.message);
+      clearInterval(intervalId);
       res.end();
     }
   },
