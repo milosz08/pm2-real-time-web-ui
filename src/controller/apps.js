@@ -28,7 +28,7 @@ const createAppDetailsObject = (account, app) => ({
   status: app.pm2_env.status,
   statusColor: determinateStatusColor(app.pm2_env.status),
   cpu: `${app.monit.cpu}%`,
-  memory: `${byteSize(app.monit.memory)}`,
+  memory: byteSize(app.monit.memory).toSting(),
   uptime: app.pm2_env.status === 'online'
     ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
     : '-',
@@ -39,23 +39,36 @@ const createAppDetailsObject = (account, app) => ({
   isAdmin: account.role === config.adminRole,
 });
 
+const constructTotalDetails = (apps) => {
+  const runningApps = apps.filter(({ pm2_env }) => pm2_env.status === 'online');
+  return {
+    cpu: `${apps.reduce((acc, { monit }) => acc + monit.cpu, 0)}%`,
+    memory: byteSize(apps.reduce((acc, { monit }) => acc + monit.memory, 0)).toString(),
+    running: runningApps.length,
+    suspended: apps.length - runningApps.length,
+  }
+}
+
 module.exports = {
   async doGetApps(req, res) {
     let pm2Apps = [];
+    let total = {};
     let error = null;
     try {
       const user = req.session.loggedUser;
       const account = await AccountModel.findById(user.id);
       const accountApps = account.getApps('view');
       const apps = await pm2Async.getListOfProcesses();
-      pm2Apps = apps
-        .filter(({ pm_id }) => account.checkAppPermission(accountApps, pm_id))
-        .map(app => (createAppDetailsObject(account, app)));
+
+      const filteredApps = apps.filter(({ pm_id }) => account.checkAppPermission(accountApps, pm_id))
+      pm2Apps = filteredApps.map(app => createAppDetailsObject(account, app));
+      total = constructTotalDetails(filteredApps)
     } catch (e) {
       error = e.message;
     }
     res.render('apps', {
       pm2Apps,
+      total,
       isNoApps: pm2Apps.length === 0,
       error,
     });

@@ -6,6 +6,11 @@ const gridColor = '#696969';
 const timeMultiplier = 40;
 const initBlankElementsCount = window.dataTick * timeMultiplier / 1000;
 
+const totalCpuLabel = document.getElementById('total-cpu');
+const totalMemoryLabel = document.getElementById('total-memory');
+const totalRunningLabel = document.getElementById('total-running');
+const totalSuspendedLabel = document.getElementById('total-suspended');
+
 const dataElements = [
   { label: 'CPU (%)', color: '#3b71ca' },
   { label: 'Memory (B)', color: '#ffffff' },
@@ -87,6 +92,21 @@ function determinateStatusColor(status) {
       return 'text-warning';
     default:
       return '';
+  }
+}
+
+window.updateTotalLabels = function (total) {
+  if (totalCpuLabel.textContent !== total.cpu) {
+    totalCpuLabel.innerText = total.cpu;
+  }
+  if (totalMemoryLabel !== total.memory) {
+    totalMemoryLabel.innerText = total.memory;
+  }
+  if (totalRunningLabel !== total.running) {
+    totalRunningLabel.innerText = total.running;
+  }
+  if (totalSuspendedLabel !== total.suspended) {
+    totalSuspendedLabel.innerText = total.suspended;
   }
 }
 

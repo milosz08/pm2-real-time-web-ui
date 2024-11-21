@@ -32,6 +32,9 @@ function generateInitChartContent() {
 function updateChartOnTick(appsMonit) {
   const now = new Date();
   const timeLabel = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+  window.updateTotalLabels(appsMonit.total);
+
   for (const [pmId, chart] of chartsMap.entries()) {
     const appMonit = appsMonit[pmId];
     if (chart.data.labels.length >= initElementsCount) {

@@ -21,17 +21,31 @@ const constructAppDetails = (app) => ({
   status: app.pm2_env.status,
 });
 
+const constructTotalDetails = (apps) => {
+  const runningApps = apps.filter(({ pm2_env }) => pm2_env.status === 'online');
+  return {
+    cpu: `${apps.reduce((acc, { monit }) => acc + monit.cpu, 0)}%`,
+    memory: byteSize(apps.reduce((acc, { monit }) => acc + monit.memory, 0)).toString(),
+    running: runningApps.length,
+    suspended: apps.length - runningApps.length,
+  }
+}
+
 const onTickAll = async (res, accountApps, user) => {
   try {
-    const apps = await pm2Async.getListOfProcesses();
+    const apps = (await pm2Async.getListOfProcesses())
+      .filter((({ pm_id }) => user.role === config.adminRole || accountApps.includes(pm_id)));
     const monitAppAsMap = apps.reduce((acc, app) => {
-      if (user.role === config.adminRole || accountApps.includes(app.pm_id)) {
-        acc[app.pm_id] = constructAppDetails(app);
-      }
+      acc[app.pm_id] = constructAppDetails(app);
       return acc;
     }, {});
-    res.write(formatMessage(monitAppAsMap));
+    const appsWithTotal = {
+      total: constructTotalDetails(apps),
+      ...monitAppAsMap,
+    }
+    res.write(formatMessage(appsWithTotal));
   } catch (e) {
+    console.log(e)
   }
 };
 

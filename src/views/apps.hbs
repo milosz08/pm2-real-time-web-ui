@@ -13,6 +13,28 @@
           </div>
         </div>
       {{else}}
+        <div class="col-12">
+          <div class="card mb-3 px-0">
+            <div class="card-body container fs-5">
+              {{#with total}}
+              <div class="row">
+                <div class="col-6">
+                  Total cpu: <b id="total-cpu">{{cpu}}</b>
+                </div>
+                <div class="col-6">
+                  Total memory usage: <b id="total-memory">{{memory}}</b>
+                </div>
+                <div class="col-6">
+                  Running processes: <b id="total-running">{{running}}</b>
+                </div>
+                <div class="col-6">
+                  Suspended processes: <b id="total-suspended">{{suspended}}</b>
+                </div>
+              </div>
+              {{/with}}
+            </div>
+          </div>
+        </div>
         <ul>
           {{#each pm2Apps}}
             <li
