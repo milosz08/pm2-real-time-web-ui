@@ -11,11 +11,14 @@ const { engine } = require('express-handlebars');
 const pm2 = require('pm2');
 const csurf = require('tiny-csrf');
 
+const fancyHeader = require('./utils/fancyHeader')
 const config = require('./utils/config');
 const session = require('./utils/session');
 const { commonVariables } = require('./middleware/root');
 const logger = require('./utils/logger');
 const db = require('./db/config');
+
+fancyHeader.printFancyHeader()
 
 pm2.connect(err => err
   ? logger.error('Unable to connect with PM2.')
