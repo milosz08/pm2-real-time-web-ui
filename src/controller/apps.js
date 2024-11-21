@@ -28,7 +28,7 @@ const createAppDetailsObject = (account, app) => ({
   status: app.pm2_env.status,
   statusColor: determinateStatusColor(app.pm2_env.status),
   cpu: `${app.monit.cpu}%`,
-  memory: byteSize(app.monit.memory).toSting(),
+  memory: byteSize(app.monit.memory).toString(),
   uptime: app.pm2_env.status === 'online'
     ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
     : '-',
