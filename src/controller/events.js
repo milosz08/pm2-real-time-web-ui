@@ -153,10 +153,7 @@ module.exports = {
         () => res.write(': ping\n\n'),
         config.ssePingInterval,
       );
-      res.on('close', () => {
-        logger.debug(`sendConsoleAppData: Connection closed with client ${user.login}.`);
-        res.end();
-      });
+      onCloseConnectionByClient(req, res, intervalId, 'sendConsoleAppData')
     } catch (e) {
       logger.error(e.message);
       clearInterval(intervalId);
