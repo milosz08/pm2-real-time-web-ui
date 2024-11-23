@@ -13,7 +13,7 @@ const formatMessage = (message) => {
 
 const constructAppDetails = (app) => ({
   pId: app.pid,
-  cpu: app.monit.cpu,
+  cpu: app.monit.cpu.toFixed(2),
   memory: `${byteSize(app.monit.memory)}`,
   uptime: app.pm2_env.status === 'online'
     ? dateFormat.toMostSignificant(app.pm2_env.pm_uptime)
@@ -24,7 +24,7 @@ const constructAppDetails = (app) => ({
 const constructTotalDetails = (apps) => {
   const runningApps = apps.filter(({ pm2_env }) => pm2_env.status === 'online');
   return {
-    cpu: `${apps.reduce((acc, { monit }) => acc + monit.cpu, 0)}%`,
+    cpu: `${apps.reduce((acc, { monit }) => acc + monit.cpu, 0).toFixed(2)}%`,
     memory: byteSize(apps.reduce((acc, { monit }) => acc + monit.memory, 0)).toString(),
     running: runningApps.length,
     suspended: apps.length - runningApps.length,

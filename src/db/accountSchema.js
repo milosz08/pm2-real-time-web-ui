@@ -77,7 +77,7 @@ accountSchema.pre('save', async function (next) {
   if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(account.password)) {
     account.invalidate(
       'password',
-    'Password must have at least 8 characters and contains big letter, small, digit and special character.',
+      'Password must have at least 8 characters and contains big letter, small, digit and special character.',
     );
     next();
   }
