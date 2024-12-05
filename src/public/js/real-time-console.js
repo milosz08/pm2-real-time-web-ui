@@ -1,7 +1,7 @@
 'use strict';
 
 const realTimeLogsBufferLinesCount = window.realTimeLogsBufferLinesCount;
-const arrowsArray = ['chevron_left', 'chevron_right'];
+const arrowsArray = ['chevron_right', 'chevron_left'];
 
 let logsContainer, errContainer;
 
@@ -92,11 +92,11 @@ function onContentLoad() {
   });
 
   resizeLogsWindowBtn.addEventListener('click', function () {
-    let classDefinition = 'container';
-    let textContent = 'Expand';
-    if (consoleContainer.classList.contains('container')) {
-      classDefinition = 'container-fluid';
-      textContent = 'Shrink';
+    let classDefinition = 'container-fluid';
+    let textContent = 'Shrink';
+    if (consoleContainer.classList.contains('container-fluid')) {
+      classDefinition = 'container';
+      textContent = 'Expand';
     }
     const arrows = Array.from(resizeLogsWindowBtn.children);
     arrowsArray.reverse();
@@ -105,7 +105,7 @@ function onContentLoad() {
     }
     consoleContainer.className = (classDefinition += ' mb-3');
     const resizeText = document.getElementById('resizeText');
-    resizeText.textContent = `${textContent} window`;  
+    resizeText.textContent = `${textContent} window`;
   });
 
   newestLogsBtn.addEventListener('click', function () {

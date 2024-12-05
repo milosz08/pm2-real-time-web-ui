@@ -205,9 +205,9 @@
               <button
                 id="resizeLogsWindowBtn"
                 class="btn btn-primary d-flex align-items-center justify-content-center col-12 col-md gap-1">
-                <span class="material-symbols-outlined fs-6">chevron_left</span>
                 <span class="material-symbols-outlined fs-6">chevron_right</span>
-                <span id="resizeText">Expand window</span>
+                <span class="material-symbols-outlined fs-6">chevron_left</span>
+                <span id="resizeText">Shrink window</span>
               </button>
               <button
                 id="clearConsoleUiBtn"
@@ -276,7 +276,7 @@
         </div>
       </div>
     </div>
-    <div class="container mb-3" data-console-pm-id="{{pmId}}">
+    <div class="container-fluid mb-3" data-console-pm-id="{{pmId}}">
       {{#with logsData}}
         <div class="tab-content">
           <div class="tab-pane active" id="stdout" tabindex="0">
