@@ -276,14 +276,14 @@ module.exports = {
     let message = '';
     try {
       const apps = await pm2Async.getListOfProcesses();
-      const availableProcesIds = apps.map(({ pm_id }) => pm_id);
+      const availableProcessIds = apps.map(({ pm_id }) => pm_id);
       const { modifiedCount } = await AccountModel.updateMany(
         { role: 'user' },
         {
           $pull: {
             permissions: {
               instancePm2Id: {
-                $nin: availableProcesIds,
+                $nin: availableProcessIds,
               },
             },
           },
