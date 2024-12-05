@@ -35,11 +35,17 @@
             </div>
           </div>
         </div>
+        <div class="col-12 mb-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="onlyRunningSwitch">
+            <label class="form-check-label" for="onlyRunningSwitch">Show only running instances</label>
+          </div>
+        </div>
         <ul>
           {{#each pm2Apps}}
             <li
               id="border-{{pmId}}"
-              class="card mb-3 px-0 container-fluid position-relative {{borderColor}}">
+              class="card mb-3 px-0 container-fluid position-relative pm2-app {{borderColor}}">
               <div
                 id="waiting-{{pmId}}"
                 class="position-absolute w-100 h-100 left-0 top-0 loading-color mx-0 rounded-3 d-none justify-content-center align-items-center">
@@ -129,3 +135,4 @@
 </div>
 <script type="text/javascript" src="/js/line-chart-props.js"></script>
 <script type="text/javascript" src="/js/real-time-charts.js"></script>
+<script type="text/javascript" src="/js/toggle-visible-apps.js"></script>

@@ -10,6 +10,7 @@ const totalCpuLabel = document.getElementById('total-cpu');
 const totalMemoryLabel = document.getElementById('total-memory');
 const totalRunningLabel = document.getElementById('total-running');
 const totalSuspendedLabel = document.getElementById('total-suspended');
+const toggleCheckboxState = document.getElementById('onlyRunningSwitch');
 
 const dataElements = [
   { label: 'CPU (%)', color: '#3b71ca' },
@@ -127,12 +128,16 @@ window.updateLabels = function (pmId, appMonit) {
   if (memLabel.textContent !== appMonit.memory) {
     memLabel.innerText = appMonit.memory;
   }
+  let disabledClass = ''
   if (statusLabel.textContent !== appMonit.status) {
     statusLabel.innerText = appMonit.status;
     if (appMonit.status === 'online') {
       borderedContainer.classList.add('border-success');
     } else {
       borderedContainer.classList.remove('border-success');
+      if (toggleCheckboxState.checked) {
+        disabledClass = 'd-none'
+      }
     }
     for (const btn of onDisabledBtn) {
       btn.disabled = appMonit.status === 'online';
@@ -142,7 +147,7 @@ window.updateLabels = function (pmId, appMonit) {
     }
     statusLabel.className = determinateStatusColor(appMonit.status);
     borderedContainer.className = [
-      'card mb-3 px-0 container-fluid position-relative',
+      `card mb-3 px-0 container-fluid position-relative ${disabledClass}`,
       determinateStatusColor(appMonit.status).replace('text', 'border'),
     ].join(' ');
   }
