@@ -60,7 +60,7 @@
         {{errors.description.message}}
       </div>
     </div>
-    <div class="col-12 mb-3">
+    <div class="col-12 mb-3" id="accessContainer">
       <p>Selected apps</p>
       {{#if appsIsEmpty}}
         <div class="col-12">
@@ -71,7 +71,7 @@
       {{/if}}
       {{#each apps}}
         <div class="card p-3 fluid-container mb-2">
-          <div class="row" id="accessContainer">
+          <div class="row">
             <div class="col-5">
               <h6 class="mb-0">{{name}} ({{id}})</h6>
             </div>
