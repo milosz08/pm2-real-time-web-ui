@@ -114,6 +114,7 @@ module.exports = {
   },
   async doPostAddAccount(req, res) {
     const { login, password, description, ...actions } = req.body;
+    const csrfToken = req.csrfToken();
     let appIdsAndNames = [];
     try {
       appIdsAndNames = await parseAppAndActions(actions);
@@ -144,6 +145,7 @@ module.exports = {
         errors: e.errors,
         apps: appIdsAndNames,
         omitPasswordCheckbox: false,
+        csrfToken,
       });
     }
   },
@@ -204,6 +206,7 @@ module.exports = {
   },
   async doPostEditAccount(req, res) {
     const { accountId } = req.params;
+    const csrfToken = req.csrfToken();
     const { login, password, description, omitPassword, ...actions } = req.body;
     let appIdsAndNames = [];
     try {
@@ -241,6 +244,7 @@ module.exports = {
         omitPasswordCheckbox: true,
         omitPasswordLabel: omitPassword === 'on' ? 'checked' : '',
         disablePasswordField: omitPassword === 'on' ? 'disabled' : '',
+        csrfToken,
       });
     }
   },

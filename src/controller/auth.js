@@ -26,6 +26,7 @@ module.exports = {
     });
   },
   async doPostLogin(req, res) {
+    const csrfToken = req.csrfToken();
     const { login, password } = req.body;
     try {
       if (config.hCaptchaEnabled) {
@@ -68,6 +69,7 @@ module.exports = {
       res.render('login', {
         form: req.body,
         error: e.message,
+        csrfToken,
       });
     }
   },
