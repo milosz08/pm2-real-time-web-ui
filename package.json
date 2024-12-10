@@ -37,6 +37,7 @@
     "winston": "^3.15.0"
   },
   "resolutions": {
-    "cross-spawn": "^7.0.5"
+    "cross-spawn": "^7.0.5",
+    "path-to-regexp": "^0.1.12"
   }
 }
