@@ -68,7 +68,7 @@ accountSchema.plugin(uniqueValidator, {
   message: 'Followed {PATH} already exist.',
 });
 
-accountSchema.pre('save', async function (next) {
+accountSchema.pre('save', function (next) {
   const account = this;
   if (!account.isModified('password')) {
     next();
@@ -85,8 +85,8 @@ accountSchema.pre('save', async function (next) {
   if (config.adminPasswordHashed && account.role === config.adminRole) {
     password = account.password
   } else {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(account.password, salt);
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(account.password, salt);
     password = hash;
   }
   account.password = password;
