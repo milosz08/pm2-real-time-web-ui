@@ -2084,10 +2084,10 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-systeminformation@^5.7:
-  version "5.22.11"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.22.11.tgz#42be7b650ce0a8b940c06219a6647f6ab3f7a349"
-  integrity sha512-aLws5yi4KCHTb0BVvbodQY5bY8eW4asMRDTxTW46hqw9lGjACX6TlLdJrkdoHYRB0qs+MekqEq1zG7WDnWE8Ug==
+systeminformation@5.23.15, systeminformation@^5.7:
+  version "5.23.15"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.23.15.tgz#c373a7ef3edb26723c406d9fbcc22242a4b93af4"
+  integrity sha512-ItuJc48qA4MR1dMUmKVv+fp8aYucMi5bQplcz+ejQHD7ZBqJDhHG6U/JGRIKRLmzmZlalE0mbA3RhwzoXzL7Lw==
 
 text-hex@1.0.x:
   version "1.0.0"
