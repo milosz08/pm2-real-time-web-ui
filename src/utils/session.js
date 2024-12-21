@@ -29,7 +29,7 @@ module.exports = {
         }
         const revokingUser = Object
           .entries(session)
-          .find(([_, value]) => value.loggedUser.id === userId.toString());
+          .find(([_, value]) => value?.loggedUser?.id === userId.toString());
         resolve(revokingUser ? {
           sid: revokingUser[0],
           socketId: revokingUser[1]?.loggedUser?.socketId,
