@@ -28,6 +28,7 @@ An interactive and open-source management panel for PM2 instances updated in rea
 - [x] automatic logs rotation in UI (keeping recent 1000 lines to prevent high memory usage),
 - [x] hCaptcha challenge in login form for prevent spam,
 - [x] simultaneous logout of the user after editing his account by the administrator,
+- [x] edit selected ecosystem config file via web interface,
 - [ ] handling multiple PM2 instances from different servers,
 - [ ] availability to start non-existing process.
 
@@ -67,6 +68,7 @@ PM2_H_CAPTCHA_SITE_KEY=<hCaptcha site key, see hCaptcha challenge section>
 PM2_H_CAPTCHA_SECRET_KEY=<hCaptcha secret, see hCaptcha challenge section>
 PM2_COOKIE_SECRET=<cookies secret>
 PM2_CSRF_SECRET=<32 characters length secret>
+PM2_ECOSYSTEM_CONFIG_FILE_PATH=<path to ecosystem config file>
 ```
 
 4. **(Only if you don't providing own MongoDB connection)** Create MongoDB instance via:
@@ -99,7 +101,6 @@ Rest of application config you can find in `utils/config.js` file. The most sign
 logsBufferLinesCount: 100, // size of the buffer for reading consecutive log lines through the stream
 realTimeLogsBufferLinesCount: 1000, // max count of records in real-time console log dump
 ```
-
 
 <a name="h-captcha-challenge"></a>
 ## hCaptcha challenge

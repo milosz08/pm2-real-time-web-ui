@@ -1,0 +1,14 @@
+<form>
+  <input id="csrf" value="{{csrfToken}}" type="hidden"/>
+  <input id="rawContent" value="{{jsonAppsFileContent}}" type="hidden"/>
+</form>
+<div class="container">
+  <div class="row gap-2">
+    {{> errorAlert}}
+    {{#unless error}}
+      <div id="editor" class="editable-container"></div>
+    {{/unless}}
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.js"></script>
+<script type="text/javascript" src="/js/edit-ecosystem-file.js"></script>

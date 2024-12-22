@@ -14,6 +14,11 @@
   resize: vertical;
 }
 
+.editable-container {
+  width: 100%;
+  height: 800px;
+}
+
 .logs-viewer-console-container {
   height: 70vh;
   min-height: 70vh;

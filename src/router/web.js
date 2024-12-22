@@ -4,12 +4,15 @@ const { Router } = require('express');
 const apps = require('../controller/apps');
 const auth = require('../controller/auth');
 const manageAccounts = require('../controller/manageAccounts');
+const ecosystemFile = require('../controller/ecosystemFile');
 const middleware= require('../middleware/auth');
 
 const router = Router();
 
 router.get('/', middleware.userMustBeLogged, apps.doGetApps);
 router.get('/app/:pmId', middleware.userMustBeLogged, apps.doGetAppDetails);
+
+router.get('/ecosystem-file', middleware.userMustBeAdmin, ecosystemFile.doGetEcosystemFile);
 
 router.get('/login', middleware.userMustNotBeLogged, auth.doGetLogin);
 router.post('/login', middleware.userMustNotBeLogged, auth.doPostLogin);

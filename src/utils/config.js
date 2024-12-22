@@ -33,4 +33,5 @@ module.exports = {
   logTypes: ['out', 'err'],
   cookieSecret: process.env.PM2_COOKIE_SECRET || uuidv4(),
   csrfSecret: process.env.PM2_CSRF_SECRET || uuidv4().replaceAll('-', ''),
+  ecosystemConfigFilePath: process.env.PM2_ECOSYSTEM_CONFIG_FILE_PATH,
 };

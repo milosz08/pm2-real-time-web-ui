@@ -22,7 +22,7 @@ module.exports = {
       next();
     }
   },
-  userMustBeAdmin(req, res, next) { 
+  userMustBeAdmin(req, res, next) {
     const user = req.session.loggedUser;
     if (!user || user.role !== config.adminRole) {
       res.redirect('/');
