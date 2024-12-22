@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    ".github/*",
+    ".logs/*",
+    ".volumes/*",
+    "node_modules/*",
+    "src/public/*",
+    "test/*"
+  ]
+}
