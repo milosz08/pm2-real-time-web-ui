@@ -3,7 +3,6 @@
 const pm2Async = require('../utils/pm2AsyncApi');
 const logger = require('../utils/logger');
 const AccountModel = require('../db/accountSchema');
-const config = require('../utils/config');
 
 const commonAppManagementProcess = async (
   req,
@@ -12,6 +11,7 @@ const commonAppManagementProcess = async (
   checkStateCallback,
   actionCallback,
 ) => {
+  const csrfToken = req.csrfToken();
   const { pmId } = req.query;
   let message = `App was successfully ${actionText}.`;
   let status = 'success';
@@ -27,7 +27,7 @@ const commonAppManagementProcess = async (
     status = 'error';
     logger.error(e.message);
   }
-  res.json({ message, status });
+  res.json({ message, status, csrf: csrfToken });
 };
 
 module.exports = {
@@ -68,6 +68,7 @@ module.exports = {
     );
   },
   async deleteApp(req, res) {
+    const csrfToken = req.csrfToken();
     const { pmId } = req.query;
     let message = 'App was successfully deleted.';
     let status = 'success';
@@ -89,9 +90,10 @@ module.exports = {
       status = 'error';
       logger.error(`deleteApp: ${e.message}`);
     }
-    res.json({ message, status });
+    res.json({ message, status, csrf: csrfToken });
   },
   async flushAppLogs(req, res) {
+    const csrfToken = req.csrfToken();
     const { pmId } = req.query;
     let message = 'Successfully flushed application logs.';
     let status = 'success';
@@ -103,7 +105,7 @@ module.exports = {
       status = 'error';
       logger.error(`flushAppLogs: ${e.message}`);
     }
-    res.json({ message, status });
+    res.json({ message, status, csrf: csrfToken });
   },
   async fetchPartOfLogs(req, res) {
     const { pmId, type, nextByte } = req.query;

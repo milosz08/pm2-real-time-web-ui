@@ -5,14 +5,20 @@ const arrowsArray = ['chevron_right', 'chevron_left'];
 
 let logsContainer, errContainer;
 
-function commonApiCall(action, pmId, params = {}) {
+function commonConsoleApiCall(action, method = 'GET', pmId, params = {}) {
   const urlParams = new URLSearchParams(
     Object.assign({}, { pmId }, params),
   );
   return new Promise(resolve => {
     fetch(`/api/${action}?${urlParams.toString()}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        _csrf: csrf.value,
+      }),
     })
       .then(res => res.json())
       .then(data => resolve(data))
@@ -114,12 +120,14 @@ function onContentLoad() {
   });
 
   flushLogsBtn.addEventListener('click', function() {
-    commonApiCall('flush', id).then(data => {
+    commonConsoleApiCall('flush', 'PATCH', id).then(data => {
       if (data.status !== 'error') {
         logsContainer.innerHTML = '';
         errContainer.innerHTML = '';
       }
-      window.toast.show(data);
+      const { csrf: resCsrf, ...rest } = data;
+      csrf.value = resCsrf;
+      window.toast.show({ ...rest });
     });
   });
 
@@ -143,7 +151,7 @@ function onContentLoad() {
     if (nextByte !== '' && parseInt(nextByte) <= 0) {
       return;
     }
-    commonApiCall('logs', id, {
+    commonConsoleApiCall('logs', 'GET', id, {
       type,
       nextByte: nextByte ? nextByte : -1,
     }).then(data => {

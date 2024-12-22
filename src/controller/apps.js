@@ -51,6 +51,7 @@ const constructTotalDetails = (apps) => {
 
 module.exports = {
   async doGetApps(req, res) {
+    const csrfToken = req.csrfToken();
     let pm2Apps = [];
     let total = {};
     let error = null;
@@ -67,6 +68,7 @@ module.exports = {
       error = e.message;
     }
     res.render('apps', {
+      csrfToken,
       pm2Apps,
       total,
       isNoApps: pm2Apps.length === 0,
@@ -74,6 +76,7 @@ module.exports = {
     });
   },
   async doGetAppDetails(req, res) {
+    const csrfToken = req.csrfToken();
     const { pmId } = req.params;
     let error = null;
     let appDetails;
@@ -101,6 +104,7 @@ module.exports = {
       error = e.message;
     }
     res.render('appDetails', {
+      csrfToken,
       error,
       appDetails,
     });

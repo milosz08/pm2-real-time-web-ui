@@ -7,12 +7,12 @@ const events = require('../controller/events');
 
 const router = Router();
 
-router.get('/start', middleware.checkRightsToAppApi, api.startApp);
-router.get('/reload', middleware.checkRightsToAppApi, api.reloadApp);
-router.get('/restart', middleware.checkRightsToAppApi, api.restartApp);
-router.get('/stop', middleware.checkRightsToAppApi, api.stopApp);
-router.get('/delete', middleware.checkRightsToAppApi, api.deleteApp);
-router.get('/flush', middleware.checkRightsToAppApi, api.flushAppLogs);
+router.patch('/start', middleware.checkRightsToAppApi, api.startApp);
+router.patch('/reload', middleware.checkRightsToAppApi, api.reloadApp);
+router.patch('/restart', middleware.checkRightsToAppApi, api.restartApp);
+router.patch('/stop', middleware.checkRightsToAppApi, api.stopApp);
+router.patch('/delete', middleware.checkRightsToAppApi, api.deleteApp);
+router.patch('/flush', middleware.checkRightsToAppApi, api.flushAppLogs);
 router.get('/logs', middleware.checkRightsToAppApi, api.fetchPartOfLogs);
 
 router.get('/event/all', middleware.checkRightsToEventStream, events.sendMonitAllAppsData);

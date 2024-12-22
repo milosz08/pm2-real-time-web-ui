@@ -1,5 +1,7 @@
 'use strict';
 
+const csrf = document.getElementById('csrf');
+
 function loadingContainer(pmId) {
   return {
     container: document.getElementById(`waiting-${pmId}`),
@@ -19,15 +21,21 @@ function commonApiCall(action, pmId) {
   waitingContainer.show();
   return new Promise(resolve => {
     fetch(`/api/${action}?pmId=${pmId}`, {
-      method: 'GET',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        _csrf: csrf.value,
+      }),
     })
       .then(res => res.json())
       .then(data => {
         waitingContainer.hide();
-        resolve(data);
+        const { csrf: resCsrf, ...rest } = data;
+        csrf.value = resCsrf;
+        resolve({ ...rest });
       })
       .catch(() =>  resolve({
         message: 'Unexpected error',
