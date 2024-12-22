@@ -135,7 +135,7 @@ window.updateLabels = function (pmId, appMonit) {
       borderedContainer.classList.add('border-success');
     } else {
       borderedContainer.classList.remove('border-success');
-      if (toggleCheckboxState.checked) {
+      if (toggleCheckboxState?.checked) {
         disabledClass = 'd-none'
       }
     }

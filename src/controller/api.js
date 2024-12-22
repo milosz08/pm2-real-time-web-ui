@@ -87,7 +87,7 @@ module.exports = {
     } catch (e) {
       message = e.message;
       status = 'error';
-      logger.error(e.message);
+      logger.error(`deleteApp: ${e.message}`);
     }
     res.json({ message, status });
   },
@@ -101,7 +101,7 @@ module.exports = {
     } catch (e) {
       message = e.message;
       status = 'error';
-      logger.error(e.message);
+      logger.error(`flushAppLogs: ${e.message}`);
     }
     res.json({ message, status });
   },
@@ -111,7 +111,7 @@ module.exports = {
       const logLines = await pm2Async.readLogsReverse(pmId, type, nextByte);
       res.json(logLines);
     } catch (e) {
-      logger.error(e.message);
+      logger.error(`fetchPartOfLogs: ${e.message}`);
       res.json({
         message: e.message,
         status: 'error',
