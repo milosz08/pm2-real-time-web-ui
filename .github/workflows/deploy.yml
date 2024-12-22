@@ -30,6 +30,7 @@ jobs:
           path: |
             node_modules
             src
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
