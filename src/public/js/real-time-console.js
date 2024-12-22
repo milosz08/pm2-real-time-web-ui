@@ -10,16 +10,22 @@ function commonConsoleApiCall(action, method = 'GET', pmId, params = {}) {
     Object.assign({}, { pmId }, params),
   );
   return new Promise(resolve => {
-    fetch(`/api/${action}?${urlParams.toString()}`, {
+    let reqObj = {
       method,
       headers: {
         'Content-Type': 'application/json',
       },
       credentials: 'same-origin',
-      body: JSON.stringify({
-        _csrf: csrf.value,
-      }),
-    })
+    };
+    if (method !== 'GET') {
+      reqObj = {
+        ...reqObj,
+        body: JSON.stringify({
+          _csrf: csrf.value,
+        }),
+      };
+    }
+    fetch(`/api/${action}?${urlParams.toString()}`, reqObj)
       .then(res => res.json())
       .then(data => resolve(data))
       .catch(() =>  resolve({
