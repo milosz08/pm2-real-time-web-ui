@@ -39,13 +39,21 @@ const createAppDetailsObject = (account, app) => ({
   isAdmin: account.role === config.adminRole,
 });
 
-const constructTotalDetails = (apps) => {
+const constructTotalDetails = async (apps) => {
   const runningApps = apps.filter(({ pm2_env }) => pm2_env.status === 'online');
   return {
     cpu: `${apps.reduce((acc, { monit }) => acc + monit.cpu, 0).toFixed(2)}%`,
     memory: byteSize(apps.reduce((acc, { monit }) => acc + monit.memory, 0)).toString(),
     running: runningApps.length,
     suspended: apps.length - runningApps.length,
+    totalLogsSize: await createLogsObject(async type => {
+      const combinedByType = await apps.reduce(async (accPromise, app) => {
+        const acc = await accPromise;
+        const { zeroFileSize } = await pm2Async.getLogFileSize(app.pm_id, type);
+        return acc + zeroFileSize;
+      }, Promise.resolve(0));
+      return byteSize(combinedByType).toString()
+    }),
   }
 }
 
@@ -83,7 +91,7 @@ module.exports = {
           combinedLogsSize: byteSize(combinedLogsSize).toString(),
         }
       }));
-      total = constructTotalDetails(filteredApps)
+      total = await constructTotalDetails(filteredApps)
     } catch (e) {
       error = e.message;
     }
