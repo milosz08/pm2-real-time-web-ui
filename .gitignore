@@ -1,4 +1,5 @@
 node_modules
 .logs
 .volumes/**/*volume/
-ecosystem.config.js
+test/ecosystem.config.js
+test/index.js

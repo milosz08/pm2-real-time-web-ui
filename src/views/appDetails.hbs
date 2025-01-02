@@ -81,6 +81,14 @@
                   <span class="material-symbols-outlined fs-5">fingerprint</span>
                   Process ID: <b id="pid-{{pmId}}">{{pId}}</b>
                 </p>
+                <p class="m-0 d-flex align-items-center gap-2">
+                  <span class="material-symbols-outlined fs-5">chat_bubble</span>
+                  Out log size: <b id="logs-out-{{pmId}}">{{logsSize.out}}</b>
+                </p>
+                <p class="m-0 d-flex align-items-center gap-2">
+                  <span class="material-symbols-outlined fs-5">feedback</span>
+                  Err log size: <b id="logs-err-{{pmId}}">{{logsSize.err}}</b>
+                </p>
               </div>
               <div class="col-12 col-md-9 mb-3 d-flex justify-content-center align-items-center py-2">
                 <canvas height="60px" data-pm-id="{{pmId}}"></canvas>

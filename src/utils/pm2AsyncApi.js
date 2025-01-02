@@ -78,11 +78,7 @@ module.exports = {
       );
     });
   },
-  async readLogsReverse(pmId, type, nextByte) {
-    if (!config.logTypes.includes(type)) {
-      logger.error(`Unknown type of logs: ${type}. Valid: ${config.logTypes}`);
-      return { logLines: [], nextByte: -1 };
-    }
+  async getLogFileSize(pmId, type) {
     const app = await this.getProcessDetails(pmId);
     let logPath = app.pm2_env.pm_out_log_path;
     if (type === 'err') {
@@ -93,6 +89,18 @@ module.exports = {
         resolve(err ? -1 : stats.size)
       ));
     });
+    return {
+      fileSize,
+      zeroFileSize: fileSize === -1 ? 0 : fileSize,
+      logPath,
+    }
+  },
+  async readLogsReverse(pmId, type, nextByte) {
+    if (!config.logTypes.includes(type)) {
+      logger.error(`Unknown type of logs: ${type}. Valid: ${config.logTypes}`);
+      return { logLines: [], nextByte: -1 };
+    }
+    const { fileSize, logPath } = await this.getLogFileSize(pmId, type);
     if (fileSize === -1) {
       return { logLines: [], nextByte: -1 };
     }

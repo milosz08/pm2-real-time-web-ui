@@ -49,6 +49,16 @@ const constructTotalDetails = (apps) => {
   }
 }
 
+const createLogsObject = async (callback) => {
+  return await config.logTypes.reduce(async (accPromise, type) => {
+    const acc = await accPromise;
+    return {
+      ...acc,
+      [type]: await callback(type),
+    };
+  }, Promise.resolve({}));
+}
+
 module.exports = {
   async doGetApps(req, res) {
     const csrfToken = req.csrfToken();
@@ -62,7 +72,17 @@ module.exports = {
       const apps = await pm2Async.getListOfProcesses();
 
       const filteredApps = apps.filter(({ pm_id }) => account.checkAppPermission(accountApps, pm_id))
-      pm2Apps = filteredApps.map(app => createAppDetailsObject(account, app));
+      pm2Apps = await Promise.all(filteredApps.map(async app => {
+        const combinedLogsSize = await config.logTypes.reduce(async (accPromise, type) => {
+          const acc = await accPromise;
+          const { zeroFileSize } = await pm2Async.getLogFileSize(app.pm_id, type);
+          return acc + zeroFileSize;
+        }, Promise.resolve(0));
+        return {
+          ...createAppDetailsObject(account, app),
+          combinedLogsSize: byteSize(combinedLogsSize).toString(),
+        }
+      }));
       total = constructTotalDetails(filteredApps)
     } catch (e) {
       error = e.message;
@@ -92,13 +112,13 @@ module.exports = {
       appDetails = {
         ...createAppDetailsObject(account, app),
         execPath: app.pm2_env.pm_exec_path,
-        logsData: await config.logTypes.reduce(async (accPromise, type) => {
-          const acc = await accPromise;
-          return {
-            ...acc,
-            [type]: await pm2Async.readLogsReverse(pmId, type, 0),
-          };
-        }, Promise.resolve({})),
+        logsSize: await createLogsObject(async type => {
+          const { zeroFileSize } = await pm2Async.getLogFileSize(pmId, type);
+          return byteSize(zeroFileSize).toString();
+        }),
+        logsData: await createLogsObject(async type =>
+          await pm2Async.readLogsReverse(pmId, type, 0)
+        ),
       };
     } catch (e) {
       error = e.message;
